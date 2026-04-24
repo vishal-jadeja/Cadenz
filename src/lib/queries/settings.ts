@@ -2,6 +2,44 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { isAxiosError } from "axios"
 import api from "@/lib/axios"
 
+// ─── User settings ────────────────────────────────────────────────────────────
+
+interface UserSettings {
+  active_platforms: string[]
+  timezone: string | null
+  theme: string | null
+  onboarding_completed: boolean
+}
+
+export function useUserSettings() {
+  return useQuery<UserSettings>({
+    queryKey: ["user-settings"],
+    queryFn: async () => {
+      const { data } = await api.get<{ settings: UserSettings }>("/api/user/settings")
+      return data.settings
+    },
+  })
+}
+
+export interface PlatformInstruction {
+  platform: string
+  instruction_text: string | null
+  tone: string | null
+  format_rules: string | null
+}
+
+export function usePlatformInstructions() {
+  return useQuery<PlatformInstruction[]>({
+    queryKey: ["platform-instructions"],
+    queryFn: async () => {
+      const { data } = await api.get<{ instructions: PlatformInstruction[] }>(
+        "/api/user/platform-instructions"
+      )
+      return data.instructions
+    },
+  })
+}
+
 // ─── API key hooks ─────────────────────────────────────────────────────────────
 
 interface ApiKeyInfo {
@@ -81,6 +119,7 @@ interface UpsertPlatformInstructionInput {
 }
 
 export function useUpdateActivePlatforms() {
+  const qc = useQueryClient()
   return useMutation<{ success: boolean }, Error, UpdateActivePlatformsInput>({
     mutationFn: async (payload) => {
       try {
@@ -95,10 +134,14 @@ export function useUpdateActivePlatforms() {
         throw err
       }
     },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["user-settings"] })
+    },
   })
 }
 
 export function useUpsertPlatformInstruction() {
+  const qc = useQueryClient()
   return useMutation<{ success: boolean }, Error, UpsertPlatformInstructionInput>({
     mutationFn: async (payload) => {
       try {
@@ -115,6 +158,9 @@ export function useUpsertPlatformInstruction() {
         }
         throw err
       }
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["platform-instructions"] })
     },
   })
 }

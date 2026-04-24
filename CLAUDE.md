@@ -218,3 +218,16 @@ See `mintmark-step9-background-jobs.md` for the full Step 9 spec.
 | Phase 10.3–10.9 | Vercel deploy, Supabase schema, Upstash, Trigger.dev cloud, OAuth apps, Brevo — see `mintmark-step10-deploy.md` | ⬜ (manual infra steps) |
 
 See `mintmark-step10-deploy.md` for the full Step 10 spec and deployment checklist.
+
+### Step 11 — Settings Page ✅ Complete
+
+| Phase | Feature | Status |
+|-------|---------|--------|
+| Phase 11.1 | Query hooks — `useUserSettings`, `usePlatformInstructions`; fixed `invalidateQueries` on `useUpdateActivePlatforms` + `useUpsertPlatformInstruction` | ✅ |
+| Phase 11.2 | `/settings` server page + `SettingsClient` tab container (4 tabs, local state, `<Suspense>` for ConnectionsTab) | ✅ |
+| Phase 11.3 | `ConnectionsTab` — all 5 platforms flat, connect/disconnect, backfill chip | ✅ |
+| Phase 11.4 | `PublishingTab` — active platforms + AI instructions, seeded from queries with `initialized` guard | ✅ |
+| Phase 11.5 | `ApiKeysTab` — 4 provider cards, show/delete existing keys, two-step delete | ✅ |
+| Phase 11.6 | `PrivacyTab` — Phase 2 placeholder | ✅ |
+
+See `mintmark-step11-settings.md` for the full Step 11 spec.
