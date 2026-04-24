@@ -1,5 +1,6 @@
 import { auth } from "@/auth"
 import { createAdminClient } from "@/lib/supabase/admin"
+import type { ContentPlatform, PlatformTone } from "@/types/database"
 
 const ALLOWED_PLATFORMS = ["linkedin", "x", "medium"] as const
 const ALLOWED_TONES = ["professional", "casual", "educational", "storytelling"] as const
@@ -49,16 +50,14 @@ export async function POST(request: Request) {
   }
 
   const supabase = createAdminClient()
-  const { error } = await supabase.from("platform_instructions").upsert(
+  const { error } = await supabase.from("platform_instructions").update(
     {
-      user_id: session.user.id,
-      platform: platform as string,
       instruction_text: (instruction_text as string | undefined) ?? null,
-      tone: (tone as string | undefined) ?? null,
+      tone: (tone as PlatformTone | undefined) ?? null,
       format_rules: (format_rules as string | undefined) ?? null,
-    },
-    { onConflict: "user_id,platform" }
-  )
+      updated_at: new Date().toISOString(),
+    }
+  ).eq("user_id", session.user.id).eq("platform", platform as ContentPlatform)
 
   if (error) {
     console.error("[platform-instructions POST] Supabase error:", error.message)

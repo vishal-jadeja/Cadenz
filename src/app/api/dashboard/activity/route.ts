@@ -1,6 +1,7 @@
 import { auth } from "@/auth"
 import { createAdminClient } from "@/lib/supabase/admin"
 import { calculateStreaks } from "@/lib/streak"
+import { ActivitySource } from "@/types/database"
 
 export async function GET(request: Request) {
   const session = await auth()
@@ -24,8 +25,8 @@ export async function GET(request: Request) {
     .gte("activity_date", sinceStr)
     .order("activity_date", { ascending: true })
 
-  if (sourceFilter) {
-    query = query.eq("source", sourceFilter)
+  if (sourceFilter && isValidActivitySource(sourceFilter)) {
+    query = query.eq("source", sourceFilter as ActivitySource)
   }
 
   const { data, error } = await query
@@ -39,4 +40,8 @@ export async function GET(request: Request) {
   const streak = calculateStreaks(activities)
 
   return Response.json({ activities, streak })
+}
+
+function isValidActivitySource(value: string): value is ActivitySource {
+  return ["github", "gmail", "linkedin", "x", "medium"].includes(value)
 }

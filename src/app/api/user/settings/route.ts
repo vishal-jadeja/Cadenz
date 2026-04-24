@@ -1,5 +1,6 @@
 import { auth } from "@/auth"
 import { createAdminClient } from "@/lib/supabase/admin"
+import type { UserSettingsRow, UserTheme } from "@/types/database"
 
 const ALLOWED_PLATFORMS = ["linkedin", "x", "medium"] as const
 const ALLOWED_THEMES = ["light", "dark"] as const
@@ -31,8 +32,8 @@ export async function PATCH(request: Request) {
     return Response.json({ error: "Unauthorized." }, { status: 403 })
   }
 
-  const body = (await request.json()) as Record<string, unknown>
-  const update: Record<string, unknown> = {}
+  const body = (await request.json()) as Partial<Pick<UserSettingsRow, "active_platforms" | "timezone" | "theme">>
+  const update: Partial<Pick<UserSettingsRow, "active_platforms" | "timezone" | "theme">> = {}
 
   if ("active_platforms" in body) {
     const ap = body.active_platforms

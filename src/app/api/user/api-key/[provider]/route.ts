@@ -4,6 +4,10 @@ import type { ApiProvider } from "@/types/database"
 
 const ALLOWED_PROVIDERS: ApiProvider[] = ["anthropic", "openai", "gemini", "groq"]
 
+function isValidApiProvider(value: string): value is ApiProvider {
+  return (ALLOWED_PROVIDERS as readonly string[]).includes(value)
+}
+
 export async function DELETE(
   _request: Request,
   { params }: { params: Promise<{ provider: string }> }
@@ -15,7 +19,7 @@ export async function DELETE(
 
   const { provider } = await params
 
-  if (!ALLOWED_PROVIDERS.includes(provider as ApiProvider)) {
+  if (!isValidApiProvider(provider)) {
     return Response.json(
       { error: "provider must be one of: anthropic, openai, gemini, groq." },
       { status: 400 }
@@ -27,7 +31,7 @@ export async function DELETE(
     .from("api_keys")
     .delete()
     .eq("user_id", session.user.id)
-    .eq("provider", provider)
+    .eq("provider", provider as ApiProvider)
 
   if (error) {
     console.error("[api-key DELETE] Supabase error:", error.message)
