@@ -30,7 +30,11 @@
       "Bash(curl -L \"https://lh3.googleusercontent.com/aida/ADBb0uikLIgK3gEy2FxbiKkxcVxE1_VQxJr8Brbueu1-g5zYLMx-O_GIelM2n4t_J8xraZCPocnMMI4Y3NAQPIKZKAVApjnpiZhiPkmtfvw-2TyM1_5W-MXd1-7wcAjRCSFnpj6_cifyy7htfwbHaLBPVS3MTV_rBbR3kANik7-4plk1ABYYSohtJs00Grzkhgs0dNNQSFjAKb8qjMOroWBstg1MCM-P1rl5DgpwIHcVqyDi78drsoZhy87SRw\" -o /tmp/admin_screenshot.png)",
       "Bash(grep -E \"\\\\.ts$|\\\\.tsx$\")",
       "Bash(xargs grep:*)",
-      "Bash(git commit -m ' *)"
+      "Bash(git commit -m ' *)",
+      "WebFetch(domain:stitch.anthropic.com)",
+      "WebFetch(domain:stitch.claude.ai)",
+      "Bash(curl -L \"https://lh3.googleusercontent.com/aida/ADBb0ugupxN90V4e7AqDeXbSD_7eb78I4KBC1dFjxApON1w2A2BWAOIJjICpbOx1Ukd6Dt_3OpJFXZluGRObisixxPXcqsTu06CnNu0x0HrlS2cl3uD5mmG-ClK_uljoON70DU6fdDGIxniLSwmQnmyZGRAumL8jXxXy6fGy0-P6zlI5wlElO_k51O3NHUfm_-JavD445fnlv6-p-FxYfSuyRS_RayepFrXrkucw5GHoCgnR9hf5r6XxJBMIKJk\" -o /tmp/stitch_login_screenshot.png)",
+      "Bash(curl -L \"https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sX2M1OWJhNzQ0MWY5NTQyYzE5NDVmNzI2ZmVhMDBjOWNmEgsSBxC0zu7NmhQYAZIBIwoKcHJvamVjdF9pZBIVQhMzMDE3NzE1NzEzNzU5Njg5NDk4&filename=&opi=89354086\" -o /tmp/stitch_login.html)"
     ]
   }
 }

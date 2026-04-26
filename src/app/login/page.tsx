@@ -3,21 +3,7 @@
 import { Suspense, useEffect, useRef, useState } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
 import { signIn } from "next-auth/react"
-import { Eye, EyeOff, X } from "lucide-react"
-import { LogoMark } from "@/components/ui/logo-mark"
-
-// ── Card style ────────────────────────────────────────────────────────────────
-
-const glassStyle: React.CSSProperties = {
-  background: "rgba(32, 31, 31, 0.65)",
-  backdropFilter: "blur(18px)",
-  WebkitBackdropFilter: "blur(18px)",
-  borderRadius: "10px",
-  borderTop: "1px solid rgba(230, 195, 100, 0.22)",
-  border: "1px solid rgba(255,255,255,0.06)",
-  boxShadow:
-    "0 8px 32px rgba(0,0,0,0.55), 0 1px 0 rgba(230,195,100,0.10) inset, 0 0 60px rgba(230,195,100,0.05)",
-}
+import { Eye, EyeOff, X, ArrowRight } from "lucide-react"
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
@@ -64,121 +50,207 @@ function LoginPageInner() {
     setIsLoading(false)
   }
 
-  const inputBase =
-    "w-full rounded-lg px-3.5 py-2.5 font-body text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-[var(--gold-border)] transition-colors duration-150 leading-normal border border-[var(--border)] bg-[var(--input)]"
+  const inputClass =
+    "w-full rounded-lg px-3.5 py-3.5 font-body text-sm text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:ring-1 focus:ring-[var(--mm-gold-400,#e6c364)] transition-all duration-300 leading-normal bg-[#0e0e0e] border-0"
 
   return (
     <div
-      className="min-h-screen flex items-center justify-center px-4"
-      style={{ background: "var(--background)" }}
+      className="min-h-screen flex items-center justify-center px-4 py-10"
+      style={{
+        background: "var(--background)",
+        backgroundImage:
+          "radial-gradient(circle at 50% 50%, rgba(230,195,100,0.03) 0%, transparent 50%)",
+      }}
     >
-      <div style={glassStyle} className="w-full max-w-md p-8 space-y-6">
-        {/* Header */}
-        <div className="flex flex-col items-center gap-3 text-center">
-          <LogoMark size={36} />
-          <h1 className="font-heading text-xl font-semibold text-foreground">
-            Sign in to Mintmark
-          </h1>
+      {/* Decorative blobs */}
+      <div
+        className="fixed top-20 left-[10%] w-64 h-64 rounded-full -z-10"
+        style={{
+          background: "rgba(230,195,100,0.05)",
+          filter: "blur(120px)",
+        }}
+      />
+      <div
+        className="fixed bottom-20 right-[10%] w-80 h-80 rounded-full -z-10"
+        style={{
+          background: "rgba(230,195,100,0.05)",
+          filter: "blur(140px)",
+        }}
+      />
+
+      <div className="w-full max-w-[400px] flex flex-col items-center gap-10">
+        {/* Brand header */}
+        <div className="flex flex-col items-center gap-1.5">
+          <span
+            className="font-heading text-4xl font-extrabold tracking-tight"
+            style={{ color: "#C9A84C" }}
+          >
+            Mintmark
+          </span>
+          <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+            The Digital Curator
+          </span>
         </div>
 
-        {/* Welcome banner */}
-        {showWelcome && (
+        {/* Auth card */}
+        <div
+          className="w-full rounded-[10px] p-10 shadow-2xl relative overflow-hidden"
+          style={{
+            background: "rgba(32, 31, 31, 0.6)",
+            backdropFilter: "blur(18px)",
+            WebkitBackdropFilter: "blur(18px)",
+            borderTop: "1px solid rgba(230,195,100,0.2)",
+            border: "1px solid rgba(255,255,255,0.05)",
+            boxShadow: "0 25px 60px rgba(0,0,0,0.6)",
+          }}
+        >
+          {/* Subtle inner glow */}
           <div
-            className="flex items-start justify-between gap-3 rounded-lg px-4 py-3"
+            className="absolute -top-24 -right-24 w-48 h-48 rounded-full"
             style={{
-              background: "rgba(230,195,100,0.08)",
-              border: "1px solid rgba(230,195,100,0.22)",
+              background: "rgba(230,195,100,0.05)",
+              filter: "blur(60px)",
             }}
-          >
-            <p className="font-body text-sm" style={{ color: "var(--mm-gold-400, #e6c364)" }}>
-              Account created. Sign in to get started.
-            </p>
-            <button
-              type="button"
-              onClick={() => setShowWelcome(false)}
-              className="shrink-0 text-muted-foreground hover:text-foreground transition-colors"
-              aria-label="Dismiss"
-            >
-              <X className="size-4" />
-            </button>
-          </div>
-        )}
+          />
 
-        {/* Login form */}
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Email */}
-          <div className="space-y-1.5">
-            <label
-              htmlFor="email"
-              className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground"
-            >
-              Email
-            </label>
-            <input
-              id="email"
-              type="email"
-              autoComplete="email"
-              autoFocus
-              required
-              placeholder="you@example.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className={inputBase}
-            />
-          </div>
-
-          {/* Password */}
-          <div className="space-y-1.5">
-            <label
-              htmlFor="password"
-              className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground"
-            >
-              Password
-            </label>
-            <div className="relative">
-              <input
-                id="password"
-                type={showPassword ? "text" : "password"}
-                autoComplete="current-password"
-                required
-                placeholder="Your password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className={`${inputBase} pr-10`}
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword((v) => !v)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-                aria-label={showPassword ? "Hide password" : "Show password"}
-              >
-                {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
-              </button>
+          <div className="relative z-10 flex flex-col gap-7">
+            {/* Card heading */}
+            <div className="flex flex-col gap-1.5">
+              <h1 className="font-heading text-3xl font-bold text-foreground tracking-tight">
+                Welcome back
+              </h1>
+              <p className="font-body text-sm text-muted-foreground">
+                Access your curated collection.
+              </p>
             </div>
-          </div>
 
-          {/* Error */}
-          {error && (
-            <p className="font-body text-sm text-red-400">{error}</p>
-          )}
-
-          {/* Submit */}
-          <button
-            type="submit"
-            disabled={isLoading}
-            className="w-full rounded-lg py-2.5 font-heading text-sm font-bold text-neutral-950 transition-opacity disabled:opacity-70 cursor-pointer disabled:cursor-not-allowed"
-            style={{
-              background: "var(--mm-gold-400, #e6c364)",
-              boxShadow: "0 0 20px rgba(230,195,100,0.15)",
-            }}
-          >
-            {isLoading ? (
-              <span className="animate-pulse">Signing in…</span>
-            ) : (
-              "Sign in"
+            {/* Welcome banner */}
+            {showWelcome && (
+              <div
+                className="flex items-start justify-between gap-3 rounded-lg px-4 py-3"
+                style={{
+                  background: "rgba(230,195,100,0.08)",
+                  border: "1px solid rgba(230,195,100,0.22)",
+                }}
+              >
+                <p
+                  className="font-body text-sm"
+                  style={{ color: "var(--mm-gold-400, #e6c364)" }}
+                >
+                  Account created. Sign in to get started.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => setShowWelcome(false)}
+                  className="shrink-0 text-muted-foreground hover:text-foreground transition-colors"
+                  aria-label="Dismiss"
+                >
+                  <X className="size-4" />
+                </button>
+              </div>
             )}
-          </button>
-        </form>
+
+            {/* Form */}
+            <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+              {/* Email */}
+              <div className="flex flex-col gap-1.5">
+                <label
+                  htmlFor="email"
+                  className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground ml-1"
+                >
+                  Email address
+                </label>
+                <input
+                  id="email"
+                  type="email"
+                  autoComplete="email"
+                  autoFocus
+                  required
+                  placeholder="curator@mintmark.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className={inputClass}
+                />
+              </div>
+
+              {/* Password */}
+              <div className="flex flex-col gap-1.5">
+                <div className="flex justify-between items-end ml-1">
+                  <label
+                    htmlFor="password"
+                    className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground"
+                  >
+                    Password
+                  </label>
+                </div>
+                <div className="relative">
+                  <input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    autoComplete="current-password"
+                    required
+                    placeholder="••••••••"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className={`${inputClass} pr-10`}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((v) => !v)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                    aria-label={showPassword ? "Hide password" : "Show password"}
+                  >
+                    {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+                  </button>
+                </div>
+              </div>
+
+              {/* Error */}
+              {error && (
+                <p className="font-body text-sm text-red-400">{error}</p>
+              )}
+
+              {/* Submit */}
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="mt-1 w-full rounded-lg py-3.5 font-heading text-sm font-semibold text-neutral-950 flex items-center justify-center gap-2 transition-all duration-300 hover:scale-[1.01] active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed disabled:scale-100 cursor-pointer"
+                style={{
+                  background: "var(--mm-gold-400, #e6c364)",
+                  boxShadow: "0 4px 20px rgba(230,195,100,0.12)",
+                }}
+              >
+                {isLoading ? (
+                  <span className="animate-pulse">Signing in…</span>
+                ) : (
+                  <>
+                    Sign in
+                    <ArrowRight className="size-4" />
+                  </>
+                )}
+              </button>
+            </form>
+          </div>
+        </div>
+
+        {/* Footer */}
+        <p className="text-center font-body text-xs text-muted-foreground">
+          New to Mintmark?{" "}
+          <a
+            href="/"
+            className="font-semibold hover:underline underline-offset-4 transition-colors"
+            style={{ color: "var(--mm-gold-400, #e6c364)" }}
+          >
+            Request access
+          </a>
+        </p>
+
+        {/* Meta footer */}
+        <div className="flex gap-6 font-mono text-[10px] uppercase tracking-widest text-muted-foreground opacity-50">
+          <a href="/privacy" className="hover:text-foreground transition-colors">Privacy</a>
+          <a href="/terms" className="hover:text-foreground transition-colors">Terms</a>
+          <span>v1.0.4</span>
+        </div>
       </div>
     </div>
   )

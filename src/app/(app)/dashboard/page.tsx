@@ -41,7 +41,7 @@ export default async function DashboardPage() {
   const userName = session.user.name ?? null
 
   return (
-    <div className="p-6 md:p-8 flex flex-col gap-6 max-w-5xl mx-auto w-full">
+    <div className="p-6 md:p-8 flex flex-col gap-6 max-w-7xl mx-auto w-full">
       <DashboardGreeting name={userName} streak={streak} hasData={hasData} />
 
       {hasData ? (

@@ -128,15 +128,18 @@ export function HeatmapWidget({ activities, streak }: Props) {
 
   return (
     <div
-      className="rounded-xl p-5"
+      className="rounded-xl p-6"
       style={{
-        background: "rgba(255,255,255,0.03)",
-        border: "1px solid rgba(255,255,255,0.07)",
+        background: "rgba(32, 31, 31, 0.6)",
+        backdropFilter: "blur(14px)",
+        WebkitBackdropFilter: "blur(14px)",
+        borderTop: "1px solid rgba(230,195,100,0.15)",
+        border: "1px solid rgba(255,255,255,0.05)",
       }}
     >
       {/* Header row */}
       <div className="flex items-center justify-between mb-3 gap-4 flex-wrap">
-        <h2 className="font-heading text-sm font-semibold text-foreground">
+        <h2 className="font-heading font-semibold text-foreground">
           Activity heatmap
         </h2>
         {streak.current > 0 && (
