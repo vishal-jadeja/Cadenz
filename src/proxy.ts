@@ -80,10 +80,10 @@ export async function proxy(request: NextRequest) {
   }
 
   // ── Supabase SSR cookie refresh ───────────────────────────────────────────
-  // Required on every request so Supabase session cookies stay fresh.
-  // IMPORTANT: Do NOT add any logic between createServerClient and getUser().
-  let supabaseResponse = NextResponse.next({ request })
-
+  // Only needed if any server component creates a Supabase client via cookies.
+  // NextAuth handles all auth — this just keeps Supabase anon session cookies fresh.
+  const supabaseResponse = NextResponse.next({ request })
+  
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
@@ -96,7 +96,6 @@ export async function proxy(request: NextRequest) {
           cookiesToSet.forEach(({ name, value }) =>
             request.cookies.set(name, value)
           )
-          supabaseResponse = NextResponse.next({ request })
           cookiesToSet.forEach(({ name, value, options }) =>
             supabaseResponse.cookies.set(name, value, options)
           )
@@ -104,15 +103,10 @@ export async function proxy(request: NextRequest) {
       },
     }
   )
-
-  // IMPORTANT: Do NOT add any logic between createServerClient and getUser().
-  // A simple mistake here can cause users to be randomly logged out.
-  // getUser() contacts the Supabase Auth server every time to validate the token.
-  // Do NOT use getSession() here — the session is unverified from cookies.
-  await supabase.auth.getUser()
-
-  // IMPORTANT: Return supabaseResponse as-is so cookies are forwarded correctly.
-  // If you create a new NextResponse, copy the cookies from supabaseResponse.
+  
+  // Remove the supabase.auth.getUser() call — Mintmark uses NextAuth, not Supabase Auth.
+  // That call was making a network round-trip to Supabase Auth on every request for nothing.
+  
   return supabaseResponse
 }
 
