@@ -1,68 +1,82 @@
-import { createServerClient } from "@supabase/ssr"
 import { NextResponse, type NextRequest } from "next/server"
 import { getToken } from "next-auth/jwt"
 
 export async function proxy(request: NextRequest) {
-  const { pathname } = request.nextUrl
+  const { pathname, search } = request.nextUrl
+
+  const token = await getToken({
+    req: request,
+    secret: process.env.NEXTAUTH_SECRET,
+  })
+  console.log("request", request, token)
 
   if (pathname.startsWith("/admin")) {
-    const token = await getToken({
-      req: request,
-      secret: process.env.NEXTAUTH_SECRET
-    })
     if (!token) {
       return NextResponse.redirect(new URL("/login", request.url))
     }
     if (token.role !== "admin") {
       return NextResponse.redirect(new URL("/dashboard", request.url))
     }
+
+    return NextResponse.next()
   }
 
-  else if (pathname.startsWith("/api/admin")) {
-    const token = await getToken({
-      req: request,
-      secret: process.env.NEXTAUTH_SECRET
-    })
-    if (!token) return NextResponse.redirect(new URL("/login", request.url))
+  if (pathname.startsWith("/api/admin")) {
+    if (!token) {
+      return Response.json(
+        { error: "Authentication required" },
+        { status: 401 }
+      )
+    }
+
     if ((token.role as string) !== "admin") {
       return Response.json(
         { error: "You do not have permission to access this resource." },
         { status: 403 }
       )
     }
+
+    return NextResponse.next()
   }
 
-  else if (
-    pathname.startsWith("/dashboard") ||
-    pathname.startsWith("/onboarding") ||
-    pathname.startsWith("/notes") ||
-    pathname.startsWith("/api/user") ||
-    pathname.startsWith("/api/connections") ||
-    pathname.startsWith("/api/notes") ||
-    pathname.startsWith("/api/folders") ||
-    pathname.startsWith("/api/activity")
-  ) {
-    const token = await getToken({
-      req: request,
-      secret: process.env.NEXTAUTH_SECRET
-    })
+  const protectedRoutes = [
+    "/dashboard",
+    "/onboarding",
+    "/notes",
+    "/api/user",
+    "/api/connections",
+    "/api/notes",
+    "/api/folders",
+    "/api/activity",
+  ]
+
+  const isProtectedRoute = protectedRoutes.some((route) => pathname.startsWith(route))
+
+  if (isProtectedRoute) {
     if (!token) {
-      const callbackUrl = encodeURIComponent(
-        request.nextUrl.pathname + request.nextUrl.search
-      )
+      const callbackUrl = encodeURIComponent(pathname + search)
+
       return NextResponse.redirect(
         new URL(`/login?callbackUrl=${callbackUrl}`, request.url)
       )
     }
-    if (
-      (pathname.startsWith("/dashboard") ||
-        pathname.startsWith("/onboarding") ||
-        pathname.startsWith("/notes")) &&
-      token.role === "admin"
-    ) {
+
+    const userPages = [
+      "/dashboard",
+      "/onboarding",
+      "/notes",
+    ]
+
+    const isUserPage = userPages.some((route) => pathname.startsWith(route))
+
+    if (isUserPage && (token.role as string) === "admin") {
       return NextResponse.redirect(new URL("/admin", request.url))
     }
+
+    return NextResponse.next()
   }
+
+  return NextResponse.next()
 }
 
 export const config = {
