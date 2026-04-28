@@ -1,14 +1,14 @@
 import { NextResponse, type NextRequest } from "next/server"
 import { getToken } from "next-auth/jwt"
 
+const secret = process.env.NEXTAUTH_SECRET;
 export async function proxy(request: NextRequest) {
   const { pathname, search } = request.nextUrl
 
   const token = await getToken({
     req: request,
-    secret: process.env.NEXTAUTH_SECRET,
+    secret,
   })
-  console.log("request", request, token)
 
   if (pathname.startsWith("/admin")) {
     if (!token) {
