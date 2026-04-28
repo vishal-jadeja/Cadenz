@@ -1,22 +1,15 @@
-import { NextResponse, type NextRequest } from "next/server"
-import { getToken } from "next-auth/jwt"
+import { NextResponse } from "next/server"
+import { auth } from "@/auth"
 
-export async function proxy(request: NextRequest) {
+export const proxy = auth((request) => {
   const { pathname, search } = request.nextUrl
-
-  const token = await getToken({
-    req: request,
-    secret: process.env.AUTH_SECRET
-  }).catch((err) => {
-    console.error("getToken error:", err)
-    return null
-  })
+  const session = request.auth
 
   if (pathname.startsWith("/admin")) {
-    if (!token) {
+    if (!session) {
       return NextResponse.redirect(new URL("/login", request.url))
     }
-    if (token.role !== "admin") {
+    if (session.user.role !== "admin") {
       return NextResponse.redirect(new URL("/dashboard", request.url))
     }
 
@@ -24,14 +17,14 @@ export async function proxy(request: NextRequest) {
   }
 
   if (pathname.startsWith("/api/admin")) {
-    if (!token) {
+    if (!session) {
       return Response.json(
         { error: "Authentication required" },
         { status: 401 }
       )
     }
 
-    if ((token.role as string) !== "admin") {
+    if (session.user.role !== "admin") {
       return Response.json(
         { error: "You do not have permission to access this resource." },
         { status: 403 }
@@ -55,7 +48,7 @@ export async function proxy(request: NextRequest) {
   const isProtectedRoute = protectedRoutes.some((route) => pathname.startsWith(route))
 
   if (isProtectedRoute) {
-    if (!token) {
+    if (!session) {
       const callbackUrl = encodeURIComponent(pathname + search)
 
       return NextResponse.redirect(
@@ -71,7 +64,7 @@ export async function proxy(request: NextRequest) {
 
     const isUserPage = userPages.some((route) => pathname.startsWith(route))
 
-    if (isUserPage && (token.role as string) === "admin") {
+    if (isUserPage && session.user.role === "admin") {
       return NextResponse.redirect(new URL("/admin", request.url))
     }
 
@@ -79,24 +72,24 @@ export async function proxy(request: NextRequest) {
   }
 
   return NextResponse.next()
-}
+})
 
-// export const config = {
-//   matcher: [
-//     "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
-//   ],
-// }
 export const config = {
   matcher: [
-    "/admin/:path*",
-    "/api/admin/:path*",
-    "/dashboard/:path*",
-    "/onboarding/:path*",
-    "/notes/:path*",
-    "/api/user/:path*",
-    "/api/connections/:path*",
-    "/api/notes/:path*",
-    "/api/folders/:path*",
-    "/api/activity/:path*",
+    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
   ],
 }
+// export const config = {
+//   matcher: [
+//     "/admin/:path*",
+//     "/api/admin/:path*",
+//     "/dashboard/:path*",
+//     "/onboarding/:path*",
+//     "/notes/:path*",
+//     "/api/user/:path*",
+//     "/api/connections/:path*",
+//     "/api/notes/:path*",
+//     "/api/folders/:path*",
+//     "/api/activity/:path*",
+//   ],
+// }
