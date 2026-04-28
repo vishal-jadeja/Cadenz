@@ -11,7 +11,6 @@ export async function proxy(request: NextRequest) {
     console.error("getToken error:", err)
     return null
   })
-  console.log("request", request, token)
 
   if (pathname.startsWith("/admin")) {
     if (!token) {
