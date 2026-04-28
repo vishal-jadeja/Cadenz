@@ -2,19 +2,13 @@ import { createServerClient } from "@supabase/ssr"
 import { NextResponse, type NextRequest } from "next/server"
 import { getToken } from "next-auth/jwt"
 
-const NEXTAUTH_SALT =
-  process.env.NODE_ENV === "production"
-    ? "__Secure-authjs.session-token"
-    : "authjs.session-token"
-
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
 
   if (pathname.startsWith("/admin")) {
     const token = await getToken({
       req: request,
-      secret: process.env.AUTH_SECRET,
-      salt: NEXTAUTH_SALT,
+      secret: process.env.AUTH_SECRET
     })
     if (!token) {
       return NextResponse.redirect(new URL("/login", request.url))
@@ -27,8 +21,7 @@ export async function proxy(request: NextRequest) {
   else if (pathname.startsWith("/api/admin")) {
     const token = await getToken({
       req: request,
-      secret: process.env.AUTH_SECRET,
-      salt: NEXTAUTH_SALT,
+      secret: process.env.AUTH_SECRET
     })
     if (!token) return NextResponse.redirect(new URL("/login", request.url))
     if ((token.role as string) !== "admin") {
@@ -51,8 +44,7 @@ export async function proxy(request: NextRequest) {
   ) {
     const token = await getToken({
       req: request,
-      secret: process.env.AUTH_SECRET,
-      salt: NEXTAUTH_SALT,
+      secret: process.env.AUTH_SECRET
     })
     if (!token) {
       const callbackUrl = encodeURIComponent(
