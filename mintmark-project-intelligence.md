@@ -896,6 +896,52 @@ voice_notes            user_id, audio_url, transcript, duration_seconds,
 
 ---
 
+## Account Deletion — Cascade Order
+
+`DELETE /api/user/account` removes user data explicitly in this order before
+deleting the `users` row. Never rely on a single CASCADE for this — large
+tables hold FK locks too long and can timeout.
+
+**Rule:** Every new table with a `user_id` FK must be added to this list at
+the phase it ships, in the correct position (most rows first).
+
+File to update: `src/app/api/user/account/route.ts` → `USER_DATA_TABLES`
+
+```
+Phase 1 / 2 (currently wired):
+  unified_activity        — one row per source per day, grows steadily
+  topic_nodes             — one per topic per user
+  notes                   — user's markdown notes
+  folders                 — note folders
+  platform_connections    — OAuth tokens
+  platform_instructions   — per-platform AI instructions
+  api_keys                — encrypted BYOK keys
+  user_settings           — theme, timezone, active_platforms
+
+Add at Phase 2:
+  daily_intelligence      — one per user per day
+  weekly_suggestions      — one per user per week
+  ai_messages             — one per message turn (can be large)
+  ai_conversations        — conversation containers
+  calendar_tasks          — user-set reminders
+  notion_sync_log         — Notion sync history
+
+Add at Phase 3:
+  youtube_activity        — one per video watched
+  browsing_activity       — one per domain per day
+  activity_log            — raw event log (potentially very large)
+  voice_notes             — voice recordings metadata
+
+Add at Phase 4:
+  generated_content       — AI-generated post drafts
+  content_inputs          — user studio inputs
+  portfolio_settings      — public profile config
+
+  users                   — LAST. CASCADE handles any table missed above.
+```
+
+---
+
 ## Unified Heatmap System
 
 ### What it is

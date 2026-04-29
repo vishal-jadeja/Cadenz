@@ -142,6 +142,83 @@ export function useUpdateActivePlatforms() {
   })
 }
 
+// ─── Account / profile hooks ───────────────────────────────────────────────
+
+interface UpdateProfileInput {
+  name?: string
+  avatar?: string
+}
+
+interface UpdateProfileResult {
+  name: string | null
+  avatar: string | null
+}
+
+export function useUpdateProfile() {
+  return useMutation<UpdateProfileResult, Error, UpdateProfileInput>({
+    mutationFn: async (payload) => {
+      try {
+        const { data } = await api.patch<UpdateProfileResult>("/api/user/profile", payload)
+        return data
+      } catch (err) {
+        if (isAxiosError(err)) {
+          throw new Error(
+            (err.response?.data as { error?: string })?.error ?? "Failed to update profile."
+          )
+        }
+        throw err
+      }
+    },
+  })
+}
+
+interface ChangePasswordInput {
+  currentPassword: string
+  newPassword: string
+}
+
+export function useChangePassword() {
+  return useMutation<{ success: boolean }, Error, ChangePasswordInput>({
+    mutationFn: async (payload) => {
+      try {
+        const { data } = await api.post<{ success: boolean }>("/api/user/change-password", payload)
+        return data
+      } catch (err) {
+        if (isAxiosError(err)) {
+          throw new Error(
+            (err.response?.data as { error?: string })?.error ?? "Failed to change password."
+          )
+        }
+        throw err
+      }
+    },
+  })
+}
+
+interface DeleteAccountInput {
+  confirmation: string
+}
+
+export function useDeleteAccount() {
+  return useMutation<{ success: boolean }, Error, DeleteAccountInput>({
+    mutationFn: async (payload) => {
+      try {
+        const { data } = await api.delete<{ success: boolean }>("/api/user/account", {
+          data: payload,
+        })
+        return data
+      } catch (err) {
+        if (isAxiosError(err)) {
+          throw new Error(
+            (err.response?.data as { error?: string })?.error ?? "Failed to delete account."
+          )
+        }
+        throw err
+      }
+    },
+  })
+}
+
 export function useUpsertPlatformInstruction() {
   const qc = useQueryClient()
   return useMutation<{ success: boolean }, Error, UpsertPlatformInstructionInput>({
