@@ -1,5 +1,5 @@
 /*
- * Mintmark Design System — Tailwind v4 Bridge
+ * Cadenz Design System — Tailwind v4 Bridge
  * =============================================
  * Maps semantic tokens (from themes.css) → Tailwind utility classes.
  * @theme inline means "these token values live in CSS vars, use them as-is."
@@ -47,7 +47,7 @@
   --color-input:              var(--input);
   --color-ring:               var(--ring);
 
-  /* ── Mintmark gold utilities: bg-gold, text-gold, border-gold ───────── */
+  /* ── Cadenz gold utilities: bg-gold, text-gold, border-gold ───────── */
   --color-gold:               var(--gold);
   --color-gold-foreground:    var(--gold-foreground);
   --color-gold-muted:         var(--gold-muted);

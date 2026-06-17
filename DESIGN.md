@@ -1,8 +1,8 @@
-# Mintmark Design System
+# Cadenz Design System
 
 > Dark background · Gold/amber accent · Dense and minimal like Linear or Vercel dashboard.
 >
-> "Mintmark" — the stamp a mint presses on a coin. Authentic. Certified. From a specific source.
+> "Cadenz" — the rhythm and pace of creative output. Consistent. Intentional. Yours.
 
 ---
 
@@ -274,7 +274,7 @@ animate={{ color: colors.gold[400] }}
 
 ## Creative North Star: "The Digital Curator"
 
-This design system is not a utility; it is a gallery. Mintmark treats personal branding with the same reverence as a high-end editorial spread. The Creative North Star is **"The Digital Curator"** — a philosophy that favors intentional negative space, asymmetrical balance, and the physical sensation of layered materials (glass, fine paper, and gold leaf).
+This design system is not a utility; it is a gallery. Cadenz treats personal branding with the same reverence as a high-end editorial spread. The Creative North Star is **"The Digital Curator"** — a philosophy that favors intentional negative space, asymmetrical balance, and the physical sensation of layered materials (glass, fine paper, and gold leaf).
 
 To move beyond the "SaaS template" look, we reject rigid grids in favor of **Dynamic Composition**. Layouts should feel like a premium magazine: large, authoritative typography paired with "floating" glass modules that overlap and breathe. We do not "box" content; we stage it.
 

@@ -126,7 +126,7 @@ function SuccessState({
   email: string
 }) {
   const [copyState, setCopyState] = useState<"idle" | "copied">("idle")
-  const referralUrl = `https://mintmark.app/r/${referralCode}`
+  const referralUrl = `https://cadenz.app/r/${referralCode}`
 
   const handleCopy = async () => {
     try {
@@ -142,7 +142,7 @@ function SuccessState({
   const canMoveUp = position === null || position > REFERRAL_SLOTS_BONUS
 
   const tweetText = encodeURIComponent(
-    `Just joined the Mintmark waitlist! Turn what you learn into content for LinkedIn, X, and Medium — all at once.`
+    `Just joined the Cadenz waitlist! Turn what you learn into content for LinkedIn, X, and Medium — all at once.`
   )
   const tweetUrl = encodeURIComponent(referralUrl)
   const xShareUrl = `https://twitter.com/intent/tweet?text=${tweetText}&url=${tweetUrl}`
@@ -510,7 +510,7 @@ export default function WaitlistForm() {
                     />
                     <textarea
                       name="reason"
-                      placeholder="What are you hoping to use Mintmark for? (optional)"
+                      placeholder="What are you hoping to use Cadenz for? (optional)"
                       maxLength={500}
                       rows={2}
                       value={reason}

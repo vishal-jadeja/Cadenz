@@ -11,7 +11,7 @@ export const waitlistLimiter = new Ratelimit({
   redis,
   limiter: Ratelimit.slidingWindow(10, "1 h"),
   analytics: true,
-  prefix: "mintmark:waitlist",
+  prefix: "cadenz:waitlist",
 })
 
 /** 100 requests per user per minute */
@@ -19,7 +19,7 @@ export const apiLimiter = new Ratelimit({
   redis,
   limiter: Ratelimit.fixedWindow(100, "1 m"),
   analytics: true,
-  prefix: "mintmark:api",
+  prefix: "cadenz:api",
 })
 
 /** 10 stats lookups per IP per minute */
@@ -27,7 +27,7 @@ export const statsLimiter = new Ratelimit({
   redis,
   limiter: Ratelimit.slidingWindow(10, "1 m"),
   analytics: true,
-  prefix: "mintmark:stats",
+  prefix: "cadenz:stats",
 })
 
 /** 20 token verifications per IP per hour */
@@ -35,7 +35,7 @@ export const verifyTokenLimiter = new Ratelimit({
   redis,
   limiter: Ratelimit.slidingWindow(20, "1 h"),
   analytics: true,
-  prefix: "mintmark:verify-token",
+  prefix: "cadenz:verify-token",
 })
 
 /** 20 OAuth connect/disconnect operations per user per hour */
@@ -43,7 +43,7 @@ export const connectionsLimiter = new Ratelimit({
   redis,
   limiter: Ratelimit.slidingWindow(20, "1 h"),
   analytics: true,
-  prefix: "mintmark:connections",
+  prefix: "cadenz:connections",
 })
 
 /** 5 invite acceptance attempts per IP per hour */
@@ -51,7 +51,7 @@ export const acceptInviteLimiter = new Ratelimit({
   redis,
   limiter: Ratelimit.slidingWindow(5, "1 h"),
   analytics: true,
-  prefix: "mintmark:accept-invite",
+  prefix: "cadenz:accept-invite",
 })
 
 export async function checkRateLimit(

@@ -416,7 +416,7 @@ function AdminSidebar({ onSendInvite }: { onSendInvite: () => void }) {
           </div>
           <div>
             <h1 className="font-heading text-lg font-bold tracking-tight" style={{ color: C.gold }}>
-              Mintmark
+              Cadenz
             </h1>
             <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-neutral-500 font-medium">
               The Digital Curator
@@ -470,7 +470,7 @@ function AdminSidebar({ onSendInvite }: { onSendInvite: () => void }) {
               Admin
             </p>
             <p className="font-mono text-[10px] text-neutral-500 truncate">
-              admin@mintmark.com
+              admin@cadenz.com
             </p>
           </div>
           <Settings className="size-4 text-neutral-600 cursor-pointer flex-shrink-0" />

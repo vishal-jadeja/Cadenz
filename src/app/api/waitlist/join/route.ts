@@ -156,7 +156,7 @@ export async function POST(request: Request) {
 
   // 11. Send verification email (non-blocking — failure doesn't abort signup)
   const appUrl =
-    process.env.NEXT_PUBLIC_APP_URL ?? "https://mintmark.app"
+    process.env.NEXT_PUBLIC_APP_URL ?? "https://cadenz.app"
   const verificationUrl = `${appUrl}/api/waitlist/verify?token=${verificationToken}`
   const referralUrl = `${appUrl}/ref/${newEntry.referral_code}`
 
@@ -171,7 +171,7 @@ export async function POST(request: Request) {
       referralUrl,
     }),
     text: [
-      `Thanks for joining the Mintmark waitlist!`,
+      `Thanks for joining the Cadenz waitlist!`,
       ``,
       `Confirm your spot: ${verificationUrl}`,
       ``,

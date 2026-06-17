@@ -1,5 +1,5 @@
 /*
- * Mintmark Design System — Semantic Tokens
+ * Cadenz Design System — Semantic Tokens
  * ==========================================
  * Semantic tokens swap per [data-theme]. They reference raw tokens from tokens.css.
  * Components and utilities reference THESE tokens, never --mm-* directly.
@@ -52,7 +52,7 @@
   /* Radius */
   --radius:             var(--mm-radius);
 
-  /* Mintmark-specific gold tokens */
+  /* Cadenz-specific gold tokens */
   --gold:               var(--mm-gold-400);
   --gold-foreground:    var(--mm-neutral-950);
   --gold-muted:         oklch(0.78 0.155 82 / 12%);

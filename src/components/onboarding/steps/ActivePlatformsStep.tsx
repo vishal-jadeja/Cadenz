@@ -7,7 +7,7 @@ export function ActivePlatformsStep() {
         Select posting platforms
       </h2>
       <p className="font-body text-sm text-muted-foreground max-w-sm">
-        Choose which platforms you actively post on. Mintmark will tailor its
+        Choose which platforms you actively post on. Cadenz will tailor its
         suggestions and track your activity across your selected channels.
       </p>
       <p className="font-mono text-xs" style={{ color: "var(--mm-gold-400)" }}>

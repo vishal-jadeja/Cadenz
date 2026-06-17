@@ -55,7 +55,6 @@ function LoginPageInner() {
       password,
       redirect: false,
     })
-    console.log(result)
     if (result?.error) {
       setError("Invalid email or password.")
       setIsLoading(false)
@@ -78,7 +77,7 @@ function LoginPageInner() {
         <div className="flex flex-col items-center gap-3 text-center">
           <LogoMark size={36} />
           <h1 className="font-heading text-xl font-semibold text-foreground">
-            Sign in to Mintmark
+            Sign in to Cadenz
           </h1>
         </div>
 

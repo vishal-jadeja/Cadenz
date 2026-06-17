@@ -8,8 +8,8 @@ const brevoClient = new BrevoClient({
   apiKey: process.env.BREVO_API_KEY!,
 })
 
-const FROM_EMAIL = process.env.EMAIL_FROM ?? "notifications@mintmark.app"
-const FROM_NAME = "Mintmark"
+const FROM_EMAIL = process.env.EMAIL_FROM ?? "notifications@cadenz.app"
+const FROM_NAME = "Cadenz"
 
 interface SendEmailOptions {
   to: string

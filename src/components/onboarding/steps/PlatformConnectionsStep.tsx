@@ -79,7 +79,7 @@ const SOURCE_PLATFORMS: Array<{
     meta: {
       name: "Gmail",
       description:
-        "We'll surface your newsletters and flag what's worth reading. Read-only — Mintmark never sends email on your behalf.",
+        "We'll surface your newsletters and flag what's worth reading. Read-only — Cadenz never sends email on your behalf.",
       authorizeUrl: "/api/connections/gmail/authorize",
       icon: <GmailIcon />,
     },

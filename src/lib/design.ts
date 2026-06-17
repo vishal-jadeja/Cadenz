@@ -1,5 +1,5 @@
 /**
- * Mintmark design tokens as typed TypeScript constants.
+ * Cadenz design tokens as typed TypeScript constants.
  *
  * Use these for Framer Motion animations or any context where you need
  * raw values instead of CSS custom properties. These mirror the values

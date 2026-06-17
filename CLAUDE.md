@@ -1,6 +1,6 @@
 @AGENTS.md
 
-# Mintmark — Project Instructions
+# Cadenz — Project Instructions
 
 ## Project
 
@@ -74,6 +74,23 @@ refetchOnReconnect: false
 - Use `src/lib/supabase/client.ts` for client-side reads only.
 - Early access cap: `getEarlyAccessLimit()` checks `system_config` table → `EARLY_ACCESS_LIMIT` env var → default 100.
 - Referral bonus: `get_waitlist_position(p_email)` Postgres function subtracts `REFERRAL_SLOTS_BONUS (5)` per referral, minimum position 1.
+
+---
+
+## Supabase Implementation Rules
+
+**Before implementing any new Supabase feature, read the relevant source in `node_modules/@supabase/` first.** API signatures, method names, and SSR patterns have breaking changes that differ from training data — always verify against the installed version.
+
+Key naming convention (this project uses the new Supabase naming):
+
+| Env var | Role | Used in |
+|---------|------|---------|
+| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Anon key — respects RLS, safe for browser | `client.ts`, `server.ts`, `proxy.ts` |
+| `SUPABASE_SECRET_KEY` | Service role key — bypasses RLS, **server-side only** | `admin.ts` |
+
+- The admin client passes `SUPABASE_SECRET_KEY` as the `supabaseKey` arg to `createClient()`. The SDK automatically sets both the `apikey` and `Authorization: Bearer` headers from this arg — do not override them in `global.headers`.
+- In the proxy, always call `supabase.auth.getUser()` after `createServerClient()` to refresh session cookies. Never use `getSession()` in the proxy (it reads from cookies and is unverified).
+- Admin users have no `user_settings` row — never query `user_settings` without accounting for a `null` result from admins. The proxy redirects admins away from `/dashboard` and `/onboarding` to `/admin` before any page code runs.
 
 ---
 
