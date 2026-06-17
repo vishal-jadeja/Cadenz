@@ -10,7 +10,7 @@ const redis = new Redis({
   token: process.env.UPSTASH_REDIS_REST_TOKEN!,
 })
 
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://mintmark.app"
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://cadenz.app"
 const TOKEN_TTL_HOURS = 48
 
 function generateInviteToken(): string {

@@ -4,8 +4,8 @@ import Image from "next/image";
 export function LogoMark({ size = 48 }: { size?: number }) {
   return (
     <Image
-      src="/mintmark-logo.png"
-      alt="Mintmark logo"
+      src="/cadenz-logo.png"
+      alt="Cadenz logo"
       width={size}
       height={size}
       loading="eager"

@@ -1,52 +1,52 @@
-# Mintmark — Step 8: Onboarding Intelligence Guide
+﻿# Cadenz â€” Step 8: Onboarding Intelligence Guide
 
 ## Overview
 
 Step 8 is the first step of the main app. It solves the **time-to-value problem**:
-a new user must never open Mintmark and see a blank screen. Onboarding seeds the
-system with enough real data that the dashboard is meaningful from day one —
+a new user must never open Cadenz and see a blank screen. Onboarding seeds the
+system with enough real data that the dashboard is meaningful from day one â€”
 the AI has context, the heatmap is not blank, and the user immediately sees
-Mintmark doing what it promises.
+Cadenz doing what it promises.
 
-This guide breaks Step 8 into 8 discrete phases. Each phase is atomic — it can be
+This guide breaks Step 8 into 8 discrete phases. Each phase is atomic â€” it can be
 built, tested, and committed independently. Complete them in order; each one is a
 prerequisite for the next.
 
 ```
-Phase 8.1  →  Database schema extension                  ✅ DONE
-Phase 8.2  →  Routing, middleware, and onboarding shell  ✅ DONE
-Phase 8.3  →  OAuth platform connections                 ✅ DONE
-Phase 8.4  →  GitHub backfill (Trigger.dev)              ✅ DONE
-Phase 8.5  →  Active platforms + AI instructions         ⬜ TODO  ← NEXT
-Phase 8.6  →  First manual session log                   ✅ DONE
-Phase 8.7  →  BYOK API key (optional step)               ✅ DONE
-Phase 8.8  →  Dashboard scaffold + heatmap + empty state ✅ DONE
+Phase 8.1  â†’  Database schema extension                  âœ… DONE
+Phase 8.2  â†’  Routing, middleware, and onboarding shell  âœ… DONE
+Phase 8.3  â†’  OAuth platform connections                 âœ… DONE
+Phase 8.4  â†’  GitHub backfill (Trigger.dev)              âœ… DONE
+Phase 8.5  â†’  Active platforms + AI instructions         â¬œ TODO  â† NEXT
+Phase 8.6  â†’  First manual session log                   âœ… DONE
+Phase 8.7  â†’  BYOK API key (optional step)               âœ… DONE
+Phase 8.8  â†’  Dashboard scaffold + heatmap + empty state âœ… DONE
 ```
 
 ---
 
 ## Onboarding Philosophy
 
-Mintmark is an intelligence layer — it must have context to be useful.
+Cadenz is an intelligence layer â€” it must have context to be useful.
 Onboarding is the process of giving it that context as fast as possible.
 
 The four onboarding steps are ordered by intelligence value, not by complexity:
 
-1. **Platform connections** — connects the observation layer (GitHub, Gmail).
+1. **Platform connections** â€” connects the observation layer (GitHub, Gmail).
    These are passive sources that will feed the system forever. Connecting
-   GitHub immediately backfills 90 days of real data — the heatmap is
+   GitHub immediately backfills 90 days of real data â€” the heatmap is
    populated before the user finishes onboarding.
 
-2. **Active platforms** — defines the output layer (LinkedIn, X, Medium).
+2. **Active platforms** â€” defines the output layer (LinkedIn, X, Medium).
    This is separate from connections. A user can observe everything and post
    nowhere. The two concepts must never be conflated in the UI or the code.
 
-3. **First session log** — gives the AI the most valuable signal it can
+3. **First session log** â€” gives the AI the most valuable signal it can
    receive at onboarding: what the user is actively learning right now,
    in their own words. This seeds topic_nodes and unified_activity
    immediately.
 
-4. **BYOK key** — optional. The AI assistant and content studio need this.
+4. **BYOK key** â€” optional. The AI assistant and content studio need this.
    The observation layer and heatmap work without it. Skip must be obvious.
 
 ---
@@ -73,18 +73,18 @@ system_config            key-value runtime config
 
 ---
 
-## Phase 8.1 — Database Schema Extension ✅ DONE
+## Phase 8.1 â€” Database Schema Extension âœ… DONE
 
 All tables created. RLS policies applied. Indexes in place.
 See `supabase/phase8_schema.sql` for the full migration.
 
 Key tables added:
 
-- `api_keys` — BYOK provider keys, AES-256-GCM encrypted
-- `platform_connections` — OAuth tokens for all connected platforms, encrypted
-- `platform_instructions` — per-platform AI tone and format rules
-- `unified_activity` — single source of truth, (user_id, activity_date, source) unique
-- `topic_nodes` — knowledge graph seed, built up over time
+- `api_keys` â€” BYOK provider keys, AES-256-GCM encrypted
+- `platform_connections` â€” OAuth tokens for all connected platforms, encrypted
+- `platform_instructions` â€” per-platform AI tone and format rules
+- `unified_activity` â€” single source of truth, (user_id, activity_date, source) unique
+- `topic_nodes` â€” knowledge graph seed, built up over time
 
 Note: `platform_connections.platform` accepts:
 `github | gmail | linkedin | x | medium | leetcode | codeforces | notion | readwise`
@@ -95,33 +95,33 @@ These are different lists in different columns. Never mix them.
 
 ---
 
-## Phase 8.2 — Routing, Middleware, and Onboarding Shell ✅ DONE
+## Phase 8.2 â€” Routing, Middleware, and Onboarding Shell âœ… DONE
 
 Completed:
 
 - Middleware: new users redirected to `/onboarding`, existing users to `/dashboard`
 - `/onboarding` layout + page (server component reads current `onboarding_step`)
-- `OnboardingWizard.tsx` — renders correct step based on store state
-- `OnboardingProgress.tsx` — 4-step progress indicator, Framer Motion transitions
-- `onboardingStore.ts` — Zustand store tracking step, connections, platforms, byokSkipped
-- `PATCH /api/user/onboarding` — updates step and completed flag
-- `src/app/(app)/layout.tsx` — app shell with sidebar + bottom nav (ahead of 8.8 spec)
-- `src/components/layout/AppSidebar.tsx` + `AppBottomNav.tsx` — built and wired
-- `src/app/(app)/dashboard/page.tsx` — protected stub (redirects to /onboarding if incomplete)
+- `OnboardingWizard.tsx` â€” renders correct step based on store state
+- `OnboardingProgress.tsx` â€” 4-step progress indicator, Framer Motion transitions
+- `onboardingStore.ts` â€” Zustand store tracking step, connections, platforms, byokSkipped
+- `PATCH /api/user/onboarding` â€” updates step and completed flag
+- `src/app/(app)/layout.tsx` â€” app shell with sidebar + bottom nav (ahead of 8.8 spec)
+- `src/components/layout/AppSidebar.tsx` + `AppBottomNav.tsx` â€” built and wired
+- `src/app/(app)/dashboard/page.tsx` â€” protected stub (redirects to /onboarding if incomplete)
 - Onboarding step shell components (4 empty shells in `src/components/onboarding/steps/`)
 
 Note: The `(app)` layout, sidebar, and bottom nav are already built. Phase 8.8 only needs
-to replace the dashboard page stub with real content — the shell is done.
+to replace the dashboard page stub with real content â€” the shell is done.
 
 ---
 
-## Phase 8.3 — OAuth Platform Connections
+## Phase 8.3 â€” OAuth Platform Connections
 
 **Goal:** Let users connect their observation platforms (GitHub, Gmail) and
 publishing platforms (LinkedIn, X, Medium) via OAuth. Store encrypted tokens.
 Show connection state in Step 1 of the onboarding wizard.
 
-GitHub and Gmail are the highest-priority connections — they feed the
+GitHub and Gmail are the highest-priority connections â€” they feed the
 intelligence layer passively. LinkedIn, X, and Medium are publishing
 targets set separately in Step 2. Step 1 should make this distinction clear.
 
@@ -133,24 +133,24 @@ targets set separately in Step 2. Step 1 should make this distinction clear.
 
 Two visual sections within the same step:
 
-**Section 1 — "Connect your activity sources"**
+**Section 1 â€” "Connect your activity sources"**
 
 - GitHub card: "We'll backfill your last 90 days of commits. Your heatmap
   will have real data before you leave onboarding."
 - Gmail card: "We'll surface your newsletters and flag what's worth reading.
-  Read-only — Mintmark never sends email on your behalf."
-- Connect button → initiates OAuth. Connected state shows avatar + username
+  Read-only â€” Cadenz never sends email on your behalf."
+- Connect button â†’ initiates OAuth. Connected state shows avatar + username
   - a subtle "Disconnect" option.
 - At least one source connection is encouraged but not hard-required.
   Soft CTA if neither connected: "Connect at least one source so your
   dashboard isn't empty." Skip is available via text link.
 
-**Section 2 — "Connect your publishing platforms" (collapsed by default)**
+**Section 2 â€” "Connect your publishing platforms" (collapsed by default)**
 
 - LinkedIn, X, Medium cards
-- These are for posting only — the AI generates content for these.
+- These are for posting only â€” the AI generates content for these.
 - Connecting here is optional at onboarding. User can connect in Settings.
-- Collapsed by default with a "Also connect publishing platforms →" expander.
+- Collapsed by default with a "Also connect publishing platforms â†’" expander.
   This keeps the focus on observation sources, not posting.
 
 **TanStack Query hooks** (`src/lib/queries/connections.ts`)
@@ -165,7 +165,7 @@ useDisconnect(); // DELETE /api/connections/[platform] mutation
 ```
 GET  /api/connections
   Returns active platform_connections for authenticated user.
-  Strips tokens — returns: platform, profile_data, connected_at, is_active.
+  Strips tokens â€” returns: platform, profile_data, connected_at, is_active.
 
 DELETE /api/connections/[platform]
   Soft-delete: is_active = false, nulls both token fields.
@@ -173,12 +173,12 @@ DELETE /api/connections/[platform]
 
 GET  /api/connections/[platform]/callback
   OAuth callback handler per platform.
-  Exchanges code for tokens → AES-256-GCM encrypt via encryption.ts
-  → upsert platform_connections.
-  Fetches minimal profile data from platform API → stores in profile_data jsonb.
+  Exchanges code for tokens â†’ AES-256-GCM encrypt via encryption.ts
+  â†’ upsert platform_connections.
+  Fetches minimal profile data from platform API â†’ stores in profile_data jsonb.
   For GitHub: triggers Trigger.dev github-backfill task (Phase 8.4).
   For Gmail: stores gmail_connection_ready: true in profile_data (intelligence
-    surfacing begins in Phase 2 — connection is made now to avoid auth friction later).
+    surfacing begins in Phase 2 â€” connection is made now to avoid auth friction later).
   Redirects to /onboarding on success.
 ```
 
@@ -192,11 +192,11 @@ GET  /api/connections/[platform]/callback
 | X        | OAuth 2.0 PKCE                 | `tweet.read tweet.write users.read offline.access` |
 | Medium   | OAuth 2.0                      | `basicProfile publishPost`                         |
 
-**Gmail note:** `gmail.readonly` is the only scope requested — ever.
-Mintmark never requests write, compose, send, or modify scopes.
+**Gmail note:** `gmail.readonly` is the only scope requested â€” ever.
+Cadenz never requests write, compose, send, or modify scopes.
 This is enforced at the OAuth scope level, not just at the application layer.
 
-**Encryption** — use existing `src/lib/encryption.ts` (AES-256-GCM).
+**Encryption** â€” use existing `src/lib/encryption.ts` (AES-256-GCM).
 All `access_token` and `refresh_token` values encrypted at rest.
 Never log tokens. Never pass tokens to the client.
 
@@ -213,7 +213,7 @@ X_CLIENT_ID
 X_CLIENT_SECRET
 MEDIUM_CLIENT_ID
 MEDIUM_CLIENT_SECRET
-NEXT_PUBLIC_APP_URL        # e.g. http://localhost:3000 — builds callback URLs
+NEXT_PUBLIC_APP_URL        # e.g. http://localhost:3000 â€” builds callback URLs
 ```
 
 ### Files to create/modify
@@ -229,10 +229,10 @@ NEXT_PUBLIC_APP_URL        # e.g. http://localhost:3000 — builds callback URLs
 
 ---
 
-## Phase 8.4 — GitHub Backfill (Trigger.dev)
+## Phase 8.4 â€” GitHub Backfill (Trigger.dev)
 
 **Goal:** When a user connects GitHub, immediately backfill 90 days of commit
-history into `unified_activity`. Non-blocking — fires as a background task and
+history into `unified_activity`. Non-blocking â€” fires as a background task and
 returns instantly. User sees a "Syncing..." indicator that resolves when done.
 
 This is the single most important thing that makes the dashboard non-empty
@@ -252,9 +252,9 @@ Steps:
 1. Decrypt token using encryption.ts
 2. GitHub API: GET /search/commits?author=@me&sort=author-date
    Paginate through last 90 days of results
-3. Group commits by date → { date: string, count: number }[]
+3. Group commits by date â†’ { date: string, count: number }[]
 4. Compute intensity per day using GitHub thresholds (from config, not hardcoded):
-   0 commits = 0, 1–3 = 1, 4–7 = 2, 8–14 = 3, 15+ = 4
+   0 commits = 0, 1â€“3 = 1, 4â€“7 = 2, 8â€“14 = 3, 15+ = 4
 5. Upsert into unified_activity:
    ON CONFLICT (user_id, activity_date, source) DO UPDATE
    SET activity_count = excluded.activity_count,
@@ -268,14 +268,14 @@ Steps:
 **Intensity thresholds config** (`src/lib/activity-thresholds.ts`)
 
 ```typescript
-// Keep thresholds in one place — referenced by backfill task and any future sources
+// Keep thresholds in one place â€” referenced by backfill task and any future sources
 export const INTENSITY_THRESHOLDS: Record<string, number[]> = {
-  github: [0, 1, 4, 8, 15], // 0, 1–3=1, 4–7=2, 8–14=3, 15+=4
+  github: [0, 1, 4, 8, 15], // 0, 1â€“3=1, 4â€“7=2, 8â€“14=3, 15+=4
   session: [0, 1, 2, 4, 6], // minutes/sessions thresholds TBD
   linkedin: [0, 1, 2, 3, 5],
   x: [0, 1, 3, 5, 8],
 };
-// intensity = thresholds.findIndex(t => count < t) - 1 (clamped 0–4)
+// intensity = thresholds.findIndex(t => count < t) - 1 (clamped 0â€“4)
 ```
 
 **Backfill status API** (`src/app/api/connections/github/backfill-status/route.ts`)
@@ -287,9 +287,9 @@ GET
   Returns: { status: 'pending' | 'complete' | 'failed', synced_days: number }
 ```
 
-**PlatformConnectionsStep update** — after GitHub connect, show a subtle
-`"Syncing commits..."` chip. Poll backfill-status (max 5 retries × 3s apart).
-On complete: transition chip to `"90 days synced ✓"` with a brief fade.
+**PlatformConnectionsStep update** â€” after GitHub connect, show a subtle
+`"Syncing commits..."` chip. Poll backfill-status (max 5 retries Ã— 3s apart).
+On complete: transition chip to `"90 days synced âœ“"` with a brief fade.
 
 ### New env vars
 
@@ -310,13 +310,13 @@ TRIGGER_API_URL         # from Trigger.dev dashboard (cloud endpoint)
 
 ---
 
-## Phase 8.5 — Active Platforms + Per-Platform AI Instructions
+## Phase 8.5 â€” Active Platforms + Per-Platform AI Instructions
 
 **Goal:** Build Step 2 of the onboarding wizard. Let the user define which
 platforms they post on (separate from which platforms they have connected).
 Optionally let them define their AI voice per platform.
 
-This step defines the output layer — which platforms content studio will
+This step defines the output layer â€” which platforms content studio will
 generate drafts for. It has nothing to do with observation or tracking.
 The UI must make this distinction clear.
 
@@ -332,11 +332,11 @@ this any time in Settings."
 
 Three checkbox cards: LinkedIn, X, Medium.
 Each card: platform icon, name, character limit note
-(LinkedIn: up to 3000 chars · X: 280 chars · Medium: long-form articles).
+(LinkedIn: up to 3000 chars Â· X: 280 chars Â· Medium: long-form articles).
 
 At least one must be selected to enable the "Continue" button.
-A "Skip — I don't post anywhere yet" text link is available below.
-If skipped, active_platforms is saved as `[]` — content studio will show
+A "Skip â€” I don't post anywhere yet" text link is available below.
+If skipped, active_platforms is saved as `[]` â€” content studio will show
 a soft "select a platform in Settings to get started" prompt.
 
 After platform selection, each selected platform expands inline to show
@@ -399,9 +399,9 @@ POST  /api/user/platform-instructions
 
 ---
 
-## Phase 8.6 — First Manual Session Log
+## Phase 8.6 â€” First Manual Session Log
 
-**Goal:** Step 3 of onboarding — guide the user to log what they have been
+**Goal:** Step 3 of onboarding â€” guide the user to log what they have been
 learning or working on. This is the highest-signal context the AI receives
 at onboarding: the user's own words about what they are studying right now.
 
@@ -410,7 +410,7 @@ a dot for today) and creates the first `topic_nodes` entry, which the AI
 assistant will use from the moment the user opens it.
 
 Frame this as intelligence input, not time tracking.
-The user is not clocking hours — they are teaching Mintmark what they know.
+The user is not clocking hours â€” they are teaching Cadenz what they know.
 
 **Prerequisite:** Phase 8.1 + 8.2.
 
@@ -429,19 +429,19 @@ Fields:
 - How long (number input + unit selector: minutes / hours, required)
 - Notes (optional textarea)
   Placeholder: "Anything you want to remember about this session?"
-  Label: "Notes (optional) — these go straight to your notes, not just the log"
-  If notes are entered, also create a `notes` table row (stub for Phase 2 —
+  Label: "Notes (optional) â€” these go straight to your notes, not just the log"
+  If notes are entered, also create a `notes` table row (stub for Phase 2 â€”
   save the text to `unified_activity.metadata.session_notes` for now if
   notes table does not exist yet, and migrate when the notes page ships).
 
-"Log Session" button → POST `/api/activity/session`
+"Log Session" button â†’ POST `/api/activity/session`
 
 On success:
 
-- Brief inline confirmation: "Added to your calendar ✓"
+- Brief inline confirmation: "Added to your calendar âœ“"
 - Auto-advance to Step 4 after 1.5 seconds
 
-"Skip — I'll log later" text link (advances to Step 4 without logging).
+"Skip â€” I'll log later" text link (advances to Step 4 without logging).
 
 **API route** (`src/app/api/activity/session/route.ts`)
 
@@ -454,7 +454,7 @@ POST
 
   Steps:
   1. Compute intensity for sessions:
-     duration_minutes < 15 = 1, 15–30 = 1, 31–60 = 2, 61–120 = 3, 120+ = 4
+     duration_minutes < 15 = 1, 15â€“30 = 1, 31â€“60 = 2, 61â€“120 = 3, 120+ = 4
      (use INTENSITY_THRESHOLDS config from Phase 8.4)
 
   2. Upsert into unified_activity:
@@ -480,7 +480,7 @@ POST
 **TanStack Query hook** (add to `src/lib/queries/activity.ts`)
 
 ```typescript
-useLogSession(); // POST mutation → /api/activity/session
+useLogSession(); // POST mutation â†’ /api/activity/session
 // On success: invalidateQueries(['dashboard-activity'])
 ```
 
@@ -494,12 +494,12 @@ useLogSession(); // POST mutation → /api/activity/session
 
 ---
 
-## Phase 8.7 — BYOK API Key (Optional Step)
+## Phase 8.7 â€” BYOK API Key (Optional Step)
 
-**Goal:** Step 4 of onboarding — let the user optionally add their AI API key.
+**Goal:** Step 4 of onboarding â€” let the user optionally add their AI API key.
 The observation layer (heatmap, calendar, topic tracking) works without it.
 The AI assistant and content studio require it. Skip must be obvious and
-must not feel like failure — the user is getting value without it.
+must not feel like failure â€” the user is getting value without it.
 
 **Prerequisite:** Phase 8.1 + 8.2 + existing `src/lib/encryption.ts`.
 
@@ -508,9 +508,9 @@ must not feel like failure — the user is getting value without it.
 **BYOK key step** (`src/components/onboarding/steps/ByokKeyStep.tsx`)
 
 Heading: "Add your AI API key (optional)"
-Subheading: "Mintmark uses your own key to power the AI assistant and content
+Subheading: "Cadenz uses your own key to power the AI assistant and content
 studio. You're never billed through us. Your heatmap and tracking work without
-it — add this whenever you're ready."
+it â€” add this whenever you're ready."
 
 Provider tabs: Anthropic | OpenAI | Gemini | Groq
 For each provider:
@@ -519,19 +519,19 @@ For each provider:
 - Helper text: where to get the key + link to provider dashboard
 - Note: "Your key is encrypted and never leaves our servers in plaintext."
 
-"Save Key" button → POST `/api/user/api-key`
+"Save Key" button â†’ POST `/api/user/api-key`
 
-"Skip for now →" — clearly visible as a text link below the card.
+"Skip for now â†’" â€” clearly visible as a text link below the card.
 Never hidden, never de-emphasized, never requires a second confirmation.
 
 On save success:
 
-- Brief confirmation: "Key saved ✓"
-- After 1s: PATCH onboarding_completed = true → redirect `/dashboard`
+- Brief confirmation: "Key saved âœ“"
+- After 1s: PATCH onboarding_completed = true â†’ redirect `/dashboard`
 
 On skip:
 
-- PATCH onboarding_completed = true → redirect `/dashboard` immediately
+- PATCH onboarding_completed = true â†’ redirect `/dashboard` immediately
 
 On dashboard (post-skip): any feature requiring the key (assistant, studio)
 shows a soft prompt card: "Add your API key in Settings to unlock the AI
@@ -558,7 +558,7 @@ DELETE /api/user/api-key/[provider]
 GET   /api/user/api-keys
   Auth: requireSession
   Returns: [{ provider, is_active, created_at }]
-  NEVER returns the encrypted key value — not even to the authenticated user
+  NEVER returns the encrypted key value â€” not even to the authenticated user
 ```
 
 **TanStack Query hooks** (add to `src/lib/queries/settings.ts`)
@@ -581,7 +581,7 @@ useDeleteApiKey(); // DELETE mutation
 
 ---
 
-## Phase 8.8 — Dashboard Scaffold + Heatmap + Empty State 🟡 PARTIAL
+## Phase 8.8 â€” Dashboard Scaffold + Heatmap + Empty State ðŸŸ¡ PARTIAL
 
 **Goal:** Build the `/dashboard` page users land on after onboarding completes.
 It answers one question clearly: _what have I been investing my mind in, and
@@ -597,38 +597,38 @@ If neither, a designed empty state guides the user to their first action.
 
 **Dashboard page** (`src/app/dashboard/page.tsx`)
 Server component. Fetches unified_activity for last 365 days server-side.
-Passes data as props — no client data fetching on initial load.
+Passes data as props â€” no client data fetching on initial load.
 
 Layout (desktop):
 
 ```
 [Greeting + streak]
-[Week at a glance — 7 day cells]        [Intelligence cards — max 2]
-[Heatmap widget — 52 × 7 grid]
-[Topic time distribution — this week]
+[Week at a glance â€” 7 day cells]        [Intelligence cards â€” max 2]
+[Heatmap widget â€” 52 Ã— 7 grid]
+[Topic time distribution â€” this week]
 ```
 
 Layout (mobile): single column, same components stacked.
 
-**Dashboard layout** (`src/app/(app)/layout.tsx`) ✅ Already built
+**Dashboard layout** (`src/app/(app)/layout.tsx`) âœ… Already built
 
-- `src/components/layout/AppSidebar.tsx` — sidebar with nav items, gold accent active state ✅
-- `src/components/layout/AppBottomNav.tsx` — mobile bottom nav, 44px tap targets ✅
-- `src/components/layout/nav-items.ts` — nav item definitions ✅
-- Cmd+K trigger visible in sidebar header (desktop) — to confirm when wiring cmd+k.
+- `src/components/layout/AppSidebar.tsx` â€” sidebar with nav items, gold accent active state âœ…
+- `src/components/layout/AppBottomNav.tsx` â€” mobile bottom nav, 44px tap targets âœ…
+- `src/components/layout/nav-items.ts` â€” nav item definitions âœ…
+- Cmd+K trigger visible in sidebar header (desktop) â€” to confirm when wiring cmd+k.
 
 **Heatmap widget** (`src/components/dashboard/HeatmapWidget.tsx`)
 
-- 52 × 7 D3.js grid (Sunday → Saturday left to right)
+- 52 Ã— 7 D3.js grid (Sunday â†’ Saturday left to right)
 - Data: `unified_activity` rows aggregated by date (max intensity per day)
-- Colors from DESIGN.md CSS variables — never hardcoded hex:
-  - intensity 0 → `var(--activity-empty)` (bg-secondary equivalent)
-  - intensity 1 → `var(--activity-1)` (gold ramp — faintest)
-  - intensity 2 → `var(--activity-2)`
-  - intensity 3 → `var(--activity-3)`
-  - intensity 4 → `var(--activity-4)` (gold ramp — full)
+- Colors from DESIGN.md CSS variables â€” never hardcoded hex:
+  - intensity 0 â†’ `var(--activity-empty)` (bg-secondary equivalent)
+  - intensity 1 â†’ `var(--activity-1)` (gold ramp â€” faintest)
+  - intensity 2 â†’ `var(--activity-2)`
+  - intensity 3 â†’ `var(--activity-3)`
+  - intensity 4 â†’ `var(--activity-4)` (gold ramp â€” full)
 - Tooltip on hover: date + source breakdown
-  e.g. "April 14 · 3 GitHub commits · 1 session"
+  e.g. "April 14 Â· 3 GitHub commits Â· 1 session"
 - Source filter toggles below grid (each source as a small pill)
 - Streak counter above: "Current streak: 12 days"
 - Longest streak below: "Longest: 47 days"
@@ -638,12 +638,12 @@ Layout (mobile): single column, same components stacked.
 
 **Week at a glance** (`src/components/dashboard/WeekCalendarWidget.tsx`)
 
-- Current week Monday–Sunday, 7 columns
+- Current week Mondayâ€“Sunday, 7 columns
 - Each day: colored source dot(s) if activity exists for that date
   Dot color = source color (from DESIGN.md source color map)
 - Today highlighted with gold accent border
-- Click/tap on a day → inline expand showing source breakdown:
-  "3 GitHub commits · System design (45 min)"
+- Click/tap on a day â†’ inline expand showing source breakdown:
+  "3 GitHub commits Â· System design (45 min)"
 - Days with no activity: empty cell, no dot, no placeholder text
 - Empty state: "No activity this week yet"
 
@@ -652,7 +652,7 @@ Layout (mobile): single column, same components stacked.
 - "Where your time went this week" heading
 - Ranked list (not a pie chart) of topics from this week's session metadata
 - Format: topic name + bar + duration
-  e.g. "System design ████████░░ 4h 30m"
+  e.g. "System design â–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–‘â–‘ 4h 30m"
 - Max 5 topics shown. "See all" if more.
 - Data sourced from unified_activity.metadata.topic for source='session'
 - Empty state: "Log a session to see your topic breakdown"
@@ -660,7 +660,7 @@ Layout (mobile): single column, same components stacked.
 **Streak calculation** (`src/lib/streak.ts`)
 
 ```typescript
-// Pure function — no side effects, fully testable
+// Pure function â€” no side effects, fully testable
 export function calculateStreaks(activities: { activity_date: string }[]): {
   current: number;
   longest: number;
@@ -682,7 +682,7 @@ export function calculateStreaks(activities: { activity_date: string }[]): {
 
 - Phase 2 will populate this with real daily_intelligence data.
 - In Phase 8.8: render the slot but show nothing (no placeholder cards,
-  no "coming soon" — just empty space that will fill when the daily
+  no "coming soon" â€” just empty space that will fill when the daily
   intelligence job ships in Phase 2).
 
 **Dashboard activity API route** (`src/app/api/dashboard/activity/route.ts`)
@@ -707,10 +707,10 @@ useDashboardActivity((days = 365)); // GET /api/dashboard/activity
 **Empty state** (`src/components/dashboard/DashboardEmptyState.tsx`)
 
 - Shown when unified_activity is completely empty after onboarding
-- SVG illustration — inline, no external image requests
+- SVG illustration â€” inline, no external image requests
 - Two clear next actions:
-  - "Connect GitHub" → links to `/settings` (connections section)
-  - "Log a session" → opens a quick-log modal or links to `/settings`
+  - "Connect GitHub" â†’ links to `/settings` (connections section)
+  - "Log a session" â†’ opens a quick-log modal or links to `/settings`
 - Never a spinner. Never a blank white div.
 
 ### Files to create/modify
@@ -737,19 +737,19 @@ After all 8 phases are done, verify:
 
 **Routing and auth**
 
-- [ ] New user logs in → redirected to `/onboarding`
-- [ ] User with onboarding_completed = true → goes straight to `/dashboard`
-- [ ] Unauthenticated user hitting any `/dashboard/*` or `/onboarding` → `/login`
+- [ ] New user logs in â†’ redirected to `/onboarding`
+- [ ] User with onboarding_completed = true â†’ goes straight to `/dashboard`
+- [ ] Unauthenticated user hitting any `/dashboard/*` or `/onboarding` â†’ `/login`
 
 **Onboarding flow**
 
 - [ ] Platform connections step shows two distinct sections (observe vs. publish)
-- [ ] GitHub connect → backfill fires, "Syncing..." transitions to "90 days synced ✓"
-- [ ] Gmail connect → profile_data stores gmail_connection_ready: true (no error)
+- [ ] GitHub connect â†’ backfill fires, "Syncing..." transitions to "90 days synced âœ“"
+- [ ] Gmail connect â†’ profile_data stores gmail_connection_ready: true (no error)
 - [ ] Active platforms step: cannot continue without selecting at least one (or skip)
-- [ ] Session logged → calendar dot appears on dashboard for today
+- [ ] Session logged â†’ calendar dot appears on dashboard for today
 - [ ] BYOK key: Skip link is clearly visible, never hidden
-- [ ] Skip key → onboarding_completed = true → dashboard redirect
+- [ ] Skip key â†’ onboarding_completed = true â†’ dashboard redirect
 
 **Dashboard**
 
@@ -763,10 +763,10 @@ After all 8 phases are done, verify:
 **Data integrity**
 
 - [ ] All platform tokens encrypted at rest (no plaintext in DB)
-- [ ] Gmail OAuth scope is gmail.readonly only — no write scopes granted
+- [ ] Gmail OAuth scope is gmail.readonly only â€” no write scopes granted
 - [ ] api_keys GET never returns the encrypted key value
 - [ ] All API routes: requireSession + Upstash rate limit + input validation
-- [ ] unified_activity upserts use ON CONFLICT — no duplicate rows
+- [ ] unified_activity upserts use ON CONFLICT â€” no duplicate rows
 
 **Concept separation**
 
@@ -776,6 +776,6 @@ After all 8 phases are done, verify:
 
 **Documentation**
 
-- [ ] `CLAUDE.md` status table updated: Step 8 phases 8.3–8.8 marked complete
+- [ ] `CLAUDE.md` status table updated: Step 8 phases 8.3â€“8.8 marked complete
 - [ ] New env vars added to `.env.example` and deployment docs
 - [ ] `src/trigger/index.ts` exports github-backfill task correctly

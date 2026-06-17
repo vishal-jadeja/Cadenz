@@ -231,7 +231,7 @@ export function PublishingWidget() {
           Platform Instructions
         </h2>
         <p className="mt-1.5 font-body text-sm text-muted-foreground">
-          Tailor how Mintmark curates and crafts your digital presence across different networks.
+          Tailor how Cadenz curates and crafts your digital presence across different networks.
         </p>
       </div>
 
@@ -559,7 +559,7 @@ export function PublishingWidget() {
           <div>
             <p className="font-heading text-sm font-semibold text-foreground">Smart Suggestions</p>
             <p className="mt-1 font-body text-xs leading-relaxed text-muted-foreground">
-              Mintmark can analyze your top-performing {activeName} posts to auto-fill these
+              Cadenz can analyze your top-performing {activeName} posts to auto-fill these
               instructions.
             </p>
           </div>

@@ -1,21 +1,21 @@
 <div align="center">
 
 <!-- Replace with your actual logo -->
-<img src="https://mintmark-vishal.vercel.app/mintmark-logo.png" alt="Mintmark Logo" width="100" height="100" style="border-radius: 20px;" />
+<img src="https://cadenz-vishal.vercel.app/cadenz-logo.png" alt="Cadenz Logo" width="100" height="100" style="border-radius: 20px;" />
 
 <br />
 <br />
 
-# Mintmark
+# Cadenz
 
 **Stamp your knowledge on the internet.**
 
-Mintmark is a personal branding and productivity platform that turns what you learn into content that builds your public presence — automatically, across LinkedIn, X, and Medium.
+Cadenz is a personal branding and productivity platform that turns what you learn into content that builds your public presence — automatically, across LinkedIn, X, and Medium.
 
 <br />
 
 <!-- Replace with actual screenshot -->
-<img src="https://placehold.co/1200x630/0a0a0a/d4af37?text=Mintmark+Dashboard+Screenshot&font=montserrat" alt="Mintmark Dashboard" width="100%" style="border-radius: 12px;" />
+<img src="https://placehold.co/1200x630/0a0a0a/d4af37?text=Cadenz+Dashboard+Screenshot&font=montserrat" alt="Cadenz Dashboard" width="100%" style="border-radius: 12px;" />
 
 <br />
 <br />
@@ -29,7 +29,7 @@ Mintmark is a personal branding and productivity platform that turns what you le
 
 <br />
 
-[**Request Early Access**](https://mintmark-vishal.vercel.app) · [Report a Bug](https://github.com/vishal-jadeja/mintmark/issues) · [Request a Feature](https://github.com/vishal-jadeja/mintmark/issues)
+[**Request Early Access**](https://cadenz-vishal.vercel.app) · [Report a Bug](https://github.com/vishal-jadeja/cadenz/issues) · [Request a Feature](https://github.com/vishal-jadeja/cadenz/issues)
 
 </div>
 
@@ -37,7 +37,7 @@ Mintmark is a personal branding and productivity platform that turns what you le
 
 ## Table of Contents
 
-- [What is Mintmark](#what-is-mintmark)
+- [What is Cadenz](#what-is-cadenz)
 - [Features](#features)
 - [Screenshots](#screenshots)
 - [Tech Stack](#tech-stack)
@@ -51,13 +51,13 @@ Mintmark is a personal branding and productivity platform that turns what you le
 
 ---
 
-## What is Mintmark
+## What is Cadenz
 
-Most people learn constantly — from YouTube, articles, their own work, their own notes — but never share it publicly. The knowledge disappears. Mintmark fixes that.
+Most people learn constantly — from YouTube, articles, their own work, their own notes — but never share it publicly. The knowledge disappears. Cadenz fixes that.
 
-You paste what you learned. Mintmark generates a LinkedIn post, an X tweet, and a Medium article — all at once, all formatted to the rules you set for each platform. You review, edit, and publish directly from Mintmark. Over time, it builds a complete picture of your knowledge, what you post about, and what performs well.
+You paste what you learned. Cadenz generates a LinkedIn post, an X tweet, and a Medium article — all at once, all formatted to the rules you set for each platform. You review, edit, and publish directly from Cadenz. Over time, it builds a complete picture of your knowledge, what you post about, and what performs well.
 
-The name comes from a **mintmark** — the tiny stamp a mint presses onto a coin to certify it's real, authentic, and came from a specific source. Mintmark helps you stamp your authentic knowledge and identity onto the internet.
+The name comes from a **cadenz** — the tiny stamp a mint presses onto a coin to certify it's real, authentic, and came from a specific source. Cadenz helps you stamp your authentic knowledge and identity onto the internet.
 
 > **Core philosophy:** The app should work even when you do nothing manually. Passive-first, intelligence layer on top of your entire digital life.
 
@@ -74,13 +74,13 @@ The name comes from a **mintmark** — the tiny stamp a mint presses onto a coin
 
 <br />
 
-Paste what you learned — a YouTube video, an article, a personal experience — and Mintmark generates posts for all three platforms simultaneously, each formatted to your own rules.
+Paste what you learned — a YouTube video, an article, a personal experience — and Cadenz generates posts for all three platforms simultaneously, each formatted to your own rules.
 
 - **Per-platform AI instructions** — define your own tone, format, length, and style rules per platform. LinkedIn gets professional storytelling. X gets a punchy hook. Medium gets depth.
 - **Parallel generation** — all three platforms generated at once via `Promise.all`, streamed to the UI so it feels instant.
 - **Inline editing** — edit any generated post before publishing. Your changes are saved as a draft; nothing publishes without your explicit action.
-- **One-click publish** — connected platforms publish directly from Mintmark.
-- **BYOK AI** — bring your own API key (Anthropic, OpenAI, Gemini, or Groq). Mintmark never pays for your AI calls.
+- **One-click publish** — connected platforms publish directly from Cadenz.
+- **BYOK AI** — bring your own API key (Anthropic, OpenAI, Gemini, or Groq). Cadenz never pays for your AI calls.
 
 ---
 
@@ -131,9 +131,9 @@ Built on a RAG pipeline using pgvector. Every answer shows which notes it cited.
 
 ### ✦ Notion Sync
 
-> **Your Notion knowledge base. In Mintmark. In sync.**
+> **Your Notion knowledge base. In Cadenz. In sync.**
 
-Two-way sync between Mintmark notes and your Notion workspace. Pull pages in. Push notes back. Conflicts are flagged — never silently overwritten. Runs every 30 minutes via background job.
+Two-way sync between Cadenz notes and your Notion workspace. Pull pages in. Push notes back. Conflicts are flagged — never silently overwritten. Runs every 30 minutes via background job.
 
 ---
 
@@ -258,8 +258,8 @@ Phase 2 — Main App in progress. Onboarding and dashboard complete.
 
 ```bash
 # Clone the repository
-git clone https://github.com/vishal-jadeja/mintmark.git
-cd mintmark
+git clone https://github.com/vishal-jadeja/cadenz.git
+cd cadenz
 
 # Install dependencies
 npm install
@@ -319,7 +319,7 @@ in `.env.example`. Key variables:
 
 ## Database Setup
 
-Mintmark uses Supabase with Row Level Security enabled on every table. Apply the schema by running the SQL in `supabase/schema.sql` in your Supabase project's SQL editor.
+Cadenz uses Supabase with Row Level Security enabled on every table. Apply the schema by running the SQL in `supabase/schema.sql` in your Supabase project's SQL editor.
 
 The schema is a single cumulative file — run it top-to-bottom on a fresh project. Re-running it is safe; all statements use `CREATE IF NOT EXISTS` / `ALTER TABLE ... ADD COLUMN IF NOT EXISTS`.
 
@@ -354,7 +354,7 @@ The schema is a single cumulative file — run it top-to-bottom on a fresh proje
 ## Project Structure
 
 ```
-mintmark/
+cadenz/
 ├── src/
 │   ├── app/
 │   │   ├── admin/              # Admin dashboard (role-protected)
@@ -401,14 +401,14 @@ mintmark/
 │   ├── schema.sql              # Phase 1 cumulative schema
 │   └── phase8_schema.sql       # Phase 8 schema extension (5 new tables)
 │
-└── public/                     # Static assets (mintmark-logo.png)
+└── public/                     # Static assets (cadenz-logo.png)
 ```
 
 ---
 
 ## Security
 
-Mintmark treats security as a first-class concern, not an afterthought.
+Cadenz treats security as a first-class concern, not an afterthought.
 
 - **Encrypted token storage** — all OAuth tokens encrypted with AES-256 before hitting Supabase. The encryption key never leaves the server.
 - **httpOnly cookies only** — no tokens in `localStorage` or client-accessible storage, ever.
@@ -436,21 +436,21 @@ Mintmark treats security as a first-class concern, not an afterthought.
 | **Phase 5** | 🔲 Planned     | Weekly digest, trending topics, LinkedIn analytics, content calendar              |
 | **Phase 6** | 🔲 Planned     | XP system, streak gamification, milestone posts, open source release              |
 
-See [`mintmark-project-intelligence.md`](./mintmark-project-intelligence.md) for detailed specs on every phase.
+See [`cadenz-project-intelligence.md`](./cadenz-project-intelligence.md) for detailed specs on every phase.
 
 ---
 
 ## Contributing
 
-Mintmark is currently in **private early access**. The repository is public for transparency and feedback, but we are not accepting pull requests yet.
+Cadenz is currently in **private early access**. The repository is public for transparency and feedback, but we are not accepting pull requests yet.
 
 If you find a bug or have a feature suggestion:
 
-1. Search [existing issues](https://github.com/vishal-jadeja/mintmark/issues) first
+1. Search [existing issues](https://github.com/vishal-jadeja/cadenz/issues) first
 2. Open a new issue with as much context as possible
 3. Use the appropriate label: `bug`, `feature`, or `question`
 
-We plan to fully open-source Mintmark in Phase 6. Follow along for updates.
+We plan to fully open-source Cadenz in Phase 6. Follow along for updates.
 
 ---
 
@@ -466,11 +466,11 @@ Built with focus by [Vishal Jadeja](https://github.com/vishal-jadeja)
 
 <br />
 
-<a href="https://mintmark-vishal.vercel.app">mintmark-vishal.vercel.app</a> · <a href="https://twitter.com/ImVishalJadeja">@ImVishalJadeja</a>
+<a href="https://cadenz-vishal.vercel.app">cadenz-vishal.vercel.app</a> · <a href="https://twitter.com/ImVishalJadeja">@ImVishalJadeja</a>
 
 <br />
 <br />
 
-<sub>If Mintmark has helped you build your personal brand, consider giving it a ⭐ — it helps more people find it.</sub>
+<sub>If Cadenz has helped you build your personal brand, consider giving it a ⭐ — it helps more people find it.</sub>
 
 </div>

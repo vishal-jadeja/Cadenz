@@ -1,5 +1,5 @@
 -- =============================================================================
--- Mintmark — platform_instructions fix
+-- Cadenz — platform_instructions fix
 -- Run in Supabase SQL Editor. Idempotent.
 --
 -- Fixes:

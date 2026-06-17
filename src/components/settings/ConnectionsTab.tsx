@@ -234,7 +234,7 @@ const ALL_PLATFORMS: Array<{
     meta: {
       name: "Gmail",
       description:
-        "Surfaces newsletters and important threads. Read-only — Mintmark never sends email on your behalf.",
+        "Surfaces newsletters and important threads. Read-only — Cadenz never sends email on your behalf.",
       authorizeUrl: "/api/connections/gmail/authorize",
       icon: <GmailIcon />,
     },

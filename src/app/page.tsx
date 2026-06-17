@@ -3,11 +3,11 @@ import LandingPage from "@/components/landing/LandingPage"
 import { FAQS_DATA } from "@/lib/faq-data"
 
 export const metadata: Metadata = {
-  title: "Mintmark — Stamp your knowledge on the internet",
+  title: "Cadenz — Find your creative cadence",
   description:
     "Turn what you learn into content that builds your personal brand. LinkedIn, X, and Medium — all at once.",
   openGraph: {
-    title: "Mintmark — Stamp your knowledge on the internet",
+    title: "Cadenz — Find your creative cadence",
     description:
       "Turn what you learn into content that builds your personal brand. LinkedIn, X, and Medium — all at once.",
     type: "website",

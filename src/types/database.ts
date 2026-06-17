@@ -1,5 +1,5 @@
 /**
- * Mintmark — Supabase Database Types
+ * Cadenz — Supabase Database Types
  *
  * Matches the schema in supabase/schema.sql exactly.
  * Format mirrors Supabase CLI `supabase gen types typescript` output so
@@ -671,7 +671,7 @@ export type UserRole = "user" | "admin"
 /** AI providers supported for BYOK key storage */
 export type ApiProvider = "anthropic" | "openai" | "gemini" | "groq"
 
-/** All platforms Mintmark can connect to (includes GitHub + Gmail for activity tracking) */
+/** All platforms Cadenz can connect to (includes GitHub + Gmail for activity tracking) */
 export type Platform = "github" | "gmail" | "linkedin" | "x" | "medium"
 
 /** Content platforms only — platforms that generate posts. GitHub excluded. */

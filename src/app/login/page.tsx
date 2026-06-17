@@ -70,7 +70,7 @@ function LoginPageInner() {
             className="font-heading text-4xl font-extrabold tracking-tight"
             style={{ color: "#C9A84C" }}
           >
-            Mintmark
+            Cadenz
           </span>
           <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
             The Digital Curator
@@ -151,7 +151,7 @@ function LoginPageInner() {
                   autoComplete="email"
                   autoFocus
                   required
-                  placeholder="curator@mintmark.com"
+                  placeholder="curator@cadenz.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className={inputClass}
@@ -220,7 +220,7 @@ function LoginPageInner() {
 
         {/* Footer */}
         <p className="text-center font-body text-xs text-muted-foreground">
-          New to Mintmark?{" "}
+          New to Cadenz?{" "}
           <a
             href="/"
             className="font-semibold hover:underline underline-offset-4 transition-colors"

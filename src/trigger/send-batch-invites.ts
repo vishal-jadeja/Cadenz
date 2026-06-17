@@ -10,7 +10,7 @@ export interface SendBatchInvitesPayload {
   triggeredBy?: string
 }
 
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://mintmark.app"
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://cadenz.app"
 const TOKEN_TTL_HOURS = 48
 
 export const sendBatchInvites = task({

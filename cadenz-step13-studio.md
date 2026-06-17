@@ -1,25 +1,25 @@
-# Mintmark — Step 13: Content Studio
+﻿# Cadenz â€” Step 13: Content Studio
 
 ## Overview
 
-Step 13 builds `/studio` — the page users open when they decide to share what
-they have been learning. Input a topic or paste what you know. Mintmark
+Step 13 builds `/studio` â€” the page users open when they decide to share what
+they have been learning. Input a topic or paste what you know. Cadenz
 generates drafts for your active platforms only. Edit inline, schedule or
 publish directly.
 
-This step also introduces the BYOK AI adapter (`src/lib/ai/byok.ts`) — the
+This step also introduces the BYOK AI adapter (`src/lib/ai/byok.ts`) â€” the
 shared abstraction over Anthropic, OpenAI, Gemini, and Groq. Every AI feature
 from this step forward uses it.
 
 ```
-Phase 13.1  →  DB schema (content_inputs, generated_content)     ⬜
-Phase 13.2  →  Types update (database.ts)                        ⬜
-Phase 13.3  →  BYOK AI adapter (src/lib/ai/byok.ts)              ⬜
-Phase 13.4  →  Content generation Trigger.dev tasks              ⬜
-Phase 13.5  →  API routes (generate, drafts, publish, schedule)  ⬜
-Phase 13.6  →  Query hooks + Zustand store                       ⬜
-Phase 13.7  →  Studio page + components                          ⬜
-Phase 13.8  →  Proxy protection                                  ⬜
+Phase 13.1  â†’  DB schema (content_inputs, generated_content)     â¬œ
+Phase 13.2  â†’  Types update (database.ts)                        â¬œ
+Phase 13.3  â†’  BYOK AI adapter (src/lib/ai/byok.ts)              â¬œ
+Phase 13.4  â†’  Content generation Trigger.dev tasks              â¬œ
+Phase 13.5  â†’  API routes (generate, drafts, publish, schedule)  â¬œ
+Phase 13.6  â†’  Query hooks + Zustand store                       â¬œ
+Phase 13.7  â†’  Studio page + components                          â¬œ
+Phase 13.8  â†’  Proxy protection                                  â¬œ
 ```
 
 ---
@@ -27,37 +27,37 @@ Phase 13.8  →  Proxy protection                                  ⬜
 ## Architecture
 
 ```
-/studio (server component — auth check, load user settings)
-  └── StudioClient (client)
-        ├── StudioInput
-        │     ├── Textarea (topic/text input)
-        │     ├── PlatformSelector (shows active platforms only)
-        │     └── Generate button
-        ├── GenerationStatus (polling state, skeleton shimmer)
-        └── DraftGrid (one DraftCard per generated platform)
-              └── DraftCard
-                    ├── Platform header + char count
-                    ├── Inline textarea (editable)
-                    └── PublishControls (schedule | publish)
+/studio (server component â€” auth check, load user settings)
+  â””â”€â”€ StudioClient (client)
+        â”œâ”€â”€ StudioInput
+        â”‚     â”œâ”€â”€ Textarea (topic/text input)
+        â”‚     â”œâ”€â”€ PlatformSelector (shows active platforms only)
+        â”‚     â””â”€â”€ Generate button
+        â”œâ”€â”€ GenerationStatus (polling state, skeleton shimmer)
+        â””â”€â”€ DraftGrid (one DraftCard per generated platform)
+              â””â”€â”€ DraftCard
+                    â”œâ”€â”€ Platform header + char count
+                    â”œâ”€â”€ Inline textarea (editable)
+                    â””â”€â”€ PublishControls (schedule | publish)
 ```
 
 State flow:
 ```
 User submits input
-  → POST /api/studio/generate → creates content_inputs row, triggers Trigger.dev task
-  → studioStore.currentInputId = inputId, status = "pending"
-  → useGenerationStatus polls GET /api/studio/generate/[inputId]/status
+  â†’ POST /api/studio/generate â†’ creates content_inputs row, triggers Trigger.dev task
+  â†’ studioStore.currentInputId = inputId, status = "pending"
+  â†’ useGenerationStatus polls GET /api/studio/generate/[inputId]/status
      (refetchInterval: 2000 while status is pending/running)
-  → task completes → status = "complete" → invalidate useDrafts query
-  → DraftCards render with real content
-  → user edits → PATCH /api/studio/drafts/[id]
-  → user publishes → POST /api/studio/publish/[id]
-  → user schedules → POST /api/studio/schedule/[id] + { scheduled_at }
+  â†’ task completes â†’ status = "complete" â†’ invalidate useDrafts query
+  â†’ DraftCards render with real content
+  â†’ user edits â†’ PATCH /api/studio/drafts/[id]
+  â†’ user publishes â†’ POST /api/studio/publish/[id]
+  â†’ user schedules â†’ POST /api/studio/schedule/[id] + { scheduled_at }
 ```
 
 ---
 
-## Phase 13.1 — DB Schema
+## Phase 13.1 â€” DB Schema
 
 File: `supabase/phase13_schema.sql`
 
@@ -107,7 +107,7 @@ create policy "users manage own generated_content"
   using (auth.uid() = user_id)
   with check (auth.uid() = user_id);
 
--- Generation job tracking (maps content_input → Trigger.dev run)
+-- Generation job tracking (maps content_input â†’ Trigger.dev run)
 create table if not exists generation_jobs (
   id          uuid primary key default gen_random_uuid(),
   user_id     uuid not null references auth.users(id) on delete cascade,
@@ -130,21 +130,21 @@ create policy "users read own generation_jobs"
 
 ---
 
-## Phase 13.2 — Types Update
+## Phase 13.2 â€” Types Update
 
 Add `ContentInput`, `GeneratedContent`, and `GenerationJob` to
 `src/types/database.ts` following the existing pattern.
 
 ---
 
-## Phase 13.3 — BYOK AI Adapter
+## Phase 13.3 â€” BYOK AI Adapter
 
 File: `src/lib/ai/byok.ts`
 
 ### Purpose
 
 Single interface over Anthropic, OpenAI, Gemini, Groq.
-Used by Trigger.dev tasks (server-side only — never imported in client code).
+Used by Trigger.dev tasks (server-side only â€” never imported in client code).
 Fetches and decrypts the user's API key from `api_keys` table.
 Returns `null` if no key is configured, so callers handle the no-key case
 gracefully rather than throwing.
@@ -173,7 +173,7 @@ export interface AiAdapter {
 }
 
 // Returns null if user has no key configured for any provider.
-// Prefers: user's preferred provider → anthropic → openai → gemini → groq
+// Prefers: user's preferred provider â†’ anthropic â†’ openai â†’ gemini â†’ groq
 export async function createByokAdapter(userId: string): Promise<AiAdapter | null>
 ```
 
@@ -182,7 +182,7 @@ export async function createByokAdapter(userId: string): Promise<AiAdapter | nul
 - Use the admin Supabase client to fetch from `api_keys` WHERE user_id = userId AND is_active = true.
 - Decrypt the key via the existing `src/lib/encryption.ts` `decrypt()` function.
 - Provider selection: pick the first active key in priority order
-  (anthropic → openai → gemini → groq).
+  (anthropic â†’ openai â†’ gemini â†’ groq).
 - Model defaults per provider:
   - anthropic: `claude-sonnet-4-6`
   - openai: `gpt-4o`
@@ -194,7 +194,7 @@ export async function createByokAdapter(userId: string): Promise<AiAdapter | nul
 
 ---
 
-## Phase 13.4 — Content Generation Tasks
+## Phase 13.4 â€” Content Generation Tasks
 
 ### Task: `generate-content` (orchestrator)
 
@@ -204,11 +204,11 @@ Triggered by `POST /api/studio/generate`.
 Payload: `{ userId, inputId, platforms: string[], rawText: string }`
 
 ```
-1. createByokAdapter(userId) → if null, mark job failed + return
+1. createByokAdapter(userId) â†’ if null, mark job failed + return
 2. Fetch user's platform_instructions for each platform
-3. [Research Agent] — get user's recent notes + past posts on the topic
+3. [Research Agent] â€” get user's recent notes + past posts on the topic
    (simple text search for now; pgvector in Phase 2)
-4. [Parallel fan-out] — one subtask per active platform:
+4. [Parallel fan-out] â€” one subtask per active platform:
      generatePlatformDraft({ platform, rawText, research, instructions, adapter })
 5. Each subtask saves a generated_content row (status=draft)
 6. Update generation_jobs row: status=complete
@@ -224,9 +224,9 @@ Payload: `{ userId, inputId, platform, rawText, research, instructions, adapter?
 1. Build system prompt from platform format rules (see constants below) +
    user's platform_instructions (tone, format_rules, max_length override)
 2. Call adapter.complete()
-3. [Critic check] — score draft against format rules (char limit, structure)
+3. [Critic check] â€” score draft against format rules (char limit, structure)
    If passes: save as status=draft
-   If fails: call adapter.complete() with critique → revised draft
+   If fails: call adapter.complete() with critique â†’ revised draft
    Max 2 revision loops, then save whatever we have
 4. Upsert generated_content row
 ```
@@ -258,7 +258,7 @@ Register both tasks in `src/trigger/index.ts`.
 
 ---
 
-## Phase 13.5 — API Routes
+## Phase 13.5 â€” API Routes
 
 ### `POST /api/studio/generate`
 
@@ -316,7 +316,7 @@ Register both tasks in `src/trigger/index.ts`.
 
 ---
 
-## Phase 13.6 — Query Hooks + Zustand Store
+## Phase 13.6 â€” Query Hooks + Zustand Store
 
 ### `src/lib/queries/studio.ts`
 
@@ -347,7 +347,7 @@ interface StudioState {
 
 ---
 
-## Phase 13.7 — Studio Page + Components
+## Phase 13.7 â€” Studio Page + Components
 
 ### `src/app/(app)/studio/page.tsx`
 
@@ -371,7 +371,7 @@ Conditionally renders `GenerationStatus` or `DraftGrid` based on store state.
 
 Shown while `generationStatus` is pending or running.
 - Skeleton shimmer for each selected platform (matches DraftCard dimensions)
-- Status text: "Researching your notes..." → "Drafting for LinkedIn..." etc.
+- Status text: "Researching your notes..." â†’ "Drafting for LinkedIn..." etc.
 - Uses `useGenerationStatus` with auto-polling
 
 ### `src/components/studio/DraftCard.tsx`
@@ -385,15 +385,15 @@ Props: `draft: GeneratedContent`
 ### `src/components/studio/PublishControls.tsx`
 
 Props: `draft: GeneratedContent, onPublish, onSchedule`
-- "Publish now" button → `usePublishDraft`
-- "Schedule" button → opens a date+time picker → `useScheduleDraft`
+- "Publish now" button â†’ `usePublishDraft`
+- "Schedule" button â†’ opens a date+time picker â†’ `useScheduleDraft`
 - If platform not connected: show "Connect [platform] in Settings" chip
 
 ### Character count rules (enforced in DraftCard)
 
 ```
-LinkedIn: green ≤ 2400, amber 2401–3000, red > 3000
-X:        green ≤ 240,  amber 241–280,   red > 280
+LinkedIn: green â‰¤ 2400, amber 2401â€“3000, red > 3000
+X:        green â‰¤ 240,  amber 241â€“280,   red > 280
 Medium:   always green (no limit)
 ```
 
@@ -406,13 +406,13 @@ Medium:   always green (no limit)
 
 ---
 
-## Phase 13.8 — Proxy Protection
+## Phase 13.8 â€” Proxy Protection
 
 Add to `src/proxy.ts` protected routes:
 
 ```
-/studio            → requireSession
-/api/studio(.*)    → requireSession
+/studio            â†’ requireSession
+/api/studio(.*)    â†’ requireSession
 ```
 
 ---
@@ -421,15 +421,15 @@ Add to `src/proxy.ts` protected routes:
 
 **No active platforms configured**
 "You haven't selected any platforms yet. Choose which ones you post on in
-[Settings → Publishing]." Link to /settings.
+[Settings â†’ Publishing]." Link to /settings.
 
 **No API key configured**
-"Add your API key in [Settings → API Keys] to start generating content."
+"Add your API key in [Settings â†’ API Keys] to start generating content."
 Link to /settings.
 
 **After generation completes with no drafts (task failed)**
 "Generation failed. This usually means your API key has run out of credits.
-Check your key in [Settings → API Keys]."
+Check your key in [Settings â†’ API Keys]."
 
 ---
 
@@ -437,10 +437,10 @@ Check your key in [Settings → API Keys]."
 
 - Never generate for a platform not in `user_settings.active_platforms` unless
   user explicitly overrides for this session.
-- Rate limit generation: 10 req/min — generation hits the user's BYOK key and
+- Rate limit generation: 10 req/min â€” generation hits the user's BYOK key and
   is expensive. Enforce server-side.
 - Character count chip updates live as user types in DraftCard textarea.
 - Publish button disabled if draft text is empty.
-- Schedule date must be in the future — validate both client and server.
+- Schedule date must be in the future â€” validate both client and server.
 - `useGenerationStatus` polling stops automatically when status reaches
   `complete` or `failed` (set `refetchInterval` to `false` at that point).

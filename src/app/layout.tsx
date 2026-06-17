@@ -55,7 +55,7 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Mintmark — Stamp your knowledge on the internet",
+  title: "Cadenz — Find your creative cadence",
   description:
     "Turn what you learn into content that builds your personal brand. LinkedIn, X, and Medium — all at once.",
 };

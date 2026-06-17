@@ -53,7 +53,7 @@ const HOW_IT_WORKS = [
     phase: "Phase 01",
     title: "Observe",
     description:
-      "Mintmark quietly tracks your sessions, notes, and learning activity. No manual logging required.",
+      "Cadenz quietly tracks your sessions, notes, and learning activity. No manual logging required.",
   },
   {
     Icon: Zap,
@@ -67,7 +67,7 @@ const HOW_IT_WORKS = [
     phase: "Phase 03",
     title: "Share",
     description:
-      "When you're ready, Mintmark generates posts for only the platforms you use — formatted correctly, in your voice.",
+      "When you're ready, Cadenz generates posts for only the platforms you use — formatted correctly, in your voice.",
   },
 ]
 
@@ -356,7 +356,7 @@ function HowItWorksSection() {
           The Process
         </p>
         <h2 className="font-heading text-3xl md:text-5xl font-bold tracking-tight mb-4 text-foreground">
-          How Mintmark works
+          How Cadenz works
         </h2>
         <p className="font-body text-muted-foreground text-lg">
           Three steps to authoritative digital presence.
@@ -421,7 +421,7 @@ function OutputPreviewSection() {
             Polished to Perfection
           </h2>
           <p className="font-body text-lg text-muted-foreground mb-8 leading-relaxed">
-            Your content shouldn&apos;t just exist — it should resonate. Mintmark
+            Your content shouldn&apos;t just exist — it should resonate. Cadenz
             adapts your ideas for every canvas, maintaining your tone while
             optimising for the medium.
           </p>
@@ -676,7 +676,7 @@ function WhoItsForSection() {
       <div className="max-w-[1200px] mx-auto text-center">
         <FadeInSection className="mb-12">
           <h2 className="font-heading text-3xl font-bold tracking-tight text-foreground">
-            Who is Mintmark for?
+            Who is Cadenz for?
           </h2>
         </FadeInSection>
 
@@ -837,20 +837,20 @@ function Footer() {
           <div className="flex items-center gap-2.5 mb-6">
             <LogoMark size={28} />
             <span className="font-heading text-xl font-bold tracking-tighter text-gold">
-              Mintmark
+              Cadenz
             </span>
           </div>
           <p className="font-body text-sm text-muted-foreground max-w-xs mb-8 leading-relaxed">
-            The premium curation engine for the modern intellectual. Stamping
-            your authority on the digital frontier.
+            The premium curation engine for the modern intellectual. Build your
+            creative cadence and own the digital frontier.
           </p>
           <div className="flex gap-3">
             <a
-              href="https://x.com/mintmark"
+              href="https://x.com/cadenz"
               target="_blank"
               rel="noopener noreferrer"
               className="text-muted-foreground hover:text-gold transition-colors"
-              aria-label="Mintmark on X"
+              aria-label="Cadenz on X"
             >
               <Share2 className="size-4" strokeWidth={1.5} />
             </a>
@@ -904,10 +904,10 @@ function Footer() {
         style={{ borderTop: "1px solid rgba(255,255,255,0.04)" }}
       >
         <p className="font-mono text-[10px] text-muted-foreground/50 uppercase tracking-widest">
-          © 2025 Mintmark Technologies. All Rights Reserved.
+          © 2025 Cadenz Technologies. All Rights Reserved.
         </p>
         <p className="font-mono text-[10px] text-muted-foreground/50 uppercase tracking-widest">
-          Stamp your knowledge on the internet.
+          Find your creative cadence.
         </p>
       </div>
     </footer>

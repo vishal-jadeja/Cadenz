@@ -1,5 +1,5 @@
 /**
- * Mintmark — Tailwind CSS v4 configuration
+ * Cadenz — Tailwind CSS v4 configuration
  *
  * In Tailwind v4, design tokens (colors, spacing, radius, shadows, fonts)
  * are defined in CSS using @theme — not here. See:

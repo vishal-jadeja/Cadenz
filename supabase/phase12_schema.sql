@@ -1,5 +1,5 @@
 -- =============================================================================
--- Mintmark — Phase 12: Notes Schema
+-- Cadenz — Phase 12: Notes Schema
 -- Run in Supabase SQL Editor (Dashboard → SQL Editor → New query).
 -- Idempotent — safe to re-run on a live DB.
 --

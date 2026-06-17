@@ -1,5 +1,5 @@
 -- =============================================================================
--- Mintmark — Phase 8.1: Database Schema Extension
+-- Cadenz — Phase 8.1: Database Schema Extension
 -- Run this file in the Supabase SQL editor (Dashboard → SQL Editor → New query).
 -- It is idempotent — safe to re-run on a live DB with existing data.
 --

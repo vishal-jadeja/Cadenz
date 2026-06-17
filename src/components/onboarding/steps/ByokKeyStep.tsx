@@ -98,7 +98,7 @@ export function ByokKeyStep() {
           Add your AI API key (optional)
         </h2>
         <p className="mt-1 font-body text-sm text-muted-foreground">
-          Mintmark uses your own key to power the AI assistant and content studio.
+          Cadenz uses your own key to power the AI assistant and content studio.
           You&apos;re never billed through us. Your heatmap and tracking work without it.
         </p>
       </div>

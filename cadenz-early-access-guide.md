@@ -1,53 +1,53 @@
-# Mintmark — Early Access Build Guide
+﻿# Cadenz â€” Early Access Build Guide
 
 ## Step-by-step with Claude Code prompts
 
 ---
 
-## CURRENT STATUS — Phase 1 Early Access Complete
+## CURRENT STATUS â€” Phase 1 Early Access Complete
 
 ```
-Step 1  → Project bootstrap + Stitch MCP design pull          ✅ DONE
-Step 2  → Supabase schema + RLS setup                         ✅ DONE
-Step 3  → Waitlist landing page                               ✅ DONE
-Step 4  → Email infrastructure (Resend)                       ✅ DONE
-Step 5  → Referral system                                     ✅ DONE
-Step 6  → Invite token system + login + NextAuth v5           ✅ DONE
-Step 7  → Admin dashboard + NextAuth role protection          ✅ DONE
-──────────────────────────────────────────────────────────────────────
-Step 8  → Onboarding                                         🟡 IN PROGRESS ⬅ YOU ARE HERE
-           8.1 DB schema extension                            ✅ DONE
-           8.2 Routing + wizard shell + app layout            ✅ DONE
-           8.3 OAuth platform connections                     ⬜ TODO ← NEXT
-           8.4 GitHub commit backfill (Trigger.dev)           ⬜ TODO
-           8.5 Active platforms + AI instructions             ⬜ TODO
-           8.6 First manual session log                       ⬜ TODO
-           8.7 BYOK API key (optional step)                   ⬜ TODO
-           8.8 Dashboard scaffold + heatmap                   🟡 PARTIAL (layout done)
-Step 9  → Trigger.dev background jobs                         ⬜ TODO
-Step 10 → Deploy                                              ⬜ TODO
+Step 1  â†’ Project bootstrap + Stitch MCP design pull          âœ… DONE
+Step 2  â†’ Supabase schema + RLS setup                         âœ… DONE
+Step 3  â†’ Waitlist landing page                               âœ… DONE
+Step 4  â†’ Email infrastructure (Resend)                       âœ… DONE
+Step 5  â†’ Referral system                                     âœ… DONE
+Step 6  â†’ Invite token system + login + NextAuth v5           âœ… DONE
+Step 7  â†’ Admin dashboard + NextAuth role protection          âœ… DONE
+â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+Step 8  â†’ Onboarding                                         ðŸŸ¡ IN PROGRESS â¬… YOU ARE HERE
+           8.1 DB schema extension                            âœ… DONE
+           8.2 Routing + wizard shell + app layout            âœ… DONE
+           8.3 OAuth platform connections                     â¬œ TODO â† NEXT
+           8.4 GitHub commit backfill (Trigger.dev)           â¬œ TODO
+           8.5 Active platforms + AI instructions             â¬œ TODO
+           8.6 First manual session log                       â¬œ TODO
+           8.7 BYOK API key (optional step)                   â¬œ TODO
+           8.8 Dashboard scaffold + heatmap                   ðŸŸ¡ PARTIAL (layout done)
+Step 9  â†’ Trigger.dev background jobs                         â¬œ TODO
+Step 10 â†’ Deploy                                              â¬œ TODO
 ```
 
-### Completed — what exists in the codebase
+### Completed â€” what exists in the codebase
 
-**Step 1** — Design system pulled from Stitch MCP. `DESIGN.md`, `tailwind.config.ts`,
+**Step 1** â€” Design system pulled from Stitch MCP. `DESIGN.md`, `tailwind.config.ts`,
 `src/styles/globals.css` + `tokens.css` + `themes.css` + `bridge.css`, `src/lib/design.ts`.
 
-**Step 2** — Supabase schema created. Tables: `users`, `waitlist`, `invite_tokens`,
+**Step 2** â€” Supabase schema created. Tables: `users`, `waitlist`, `invite_tokens`,
 `user_settings`. RLS policies, indexes, DB functions (`generate_referral_code`,
 `get_waitlist_position`). TypeScript types at `src/types/database.ts`.
 
-**Step 3** — Waitlist landing page at `src/app/page.tsx` +
+**Step 3** â€” Waitlist landing page at `src/app/page.tsx` +
 `src/components/landing/LandingPage.tsx`. Hero with ambient glow, dynamic count,
 WaitlistForm with success state + referral link. Framer Motion animations throughout.
 
-**Step 4** — Full API + email layer. Supabase clients (admin/server/browser),
+**Step 4** â€” Full API + email layer. Supabase clients (admin/server/browser),
 `src/proxy.ts` (Supabase SSR cookie helper),
 rate limiting, AES-256-GCM encryption, React Email templates, Resend wrapper.
 API routes: `POST /api/waitlist/join`, `GET /api/waitlist/verify`,
 `GET /api/waitlist/count`.
 
-**Step 5** — Referral system. `src/app/ref/[code]/page.tsx` sets cookie + redirects.
+**Step 5** â€” Referral system. `src/app/ref/[code]/page.tsx` sets cookie + redirects.
 `WaitlistForm` reads cookie on mount, sends `referred_by` in payload.
 `GET /api/waitlist/referral-stats` returns position + referral count.
 Success state shows live stats, auto-refreshes every 30s.
@@ -57,64 +57,64 @@ for DB-backed invite cap (default 100, editable from admin dashboard without red
 `WaitlistForm` referral copy is now position-aware: users already in the top
 `REFERRAL_SLOTS_BONUS` positions see "You're near the top" instead of "Move Up Faster".
 
-**Step 6** — Invite token system + authentication.
+**Step 6** â€” Invite token system + authentication.
 `src/app/invite/[token]/page.tsx` (server-side token verify, shows form or error).
 `src/components/auth/InviteSignupForm.tsx` (name + password fields, useActionState).
 `GET /api/auth/verify-token` + `POST /api/auth/accept-invite`.
-`src/app/login/page.tsx` — clean login page.
-`src/auth.ts` — NextAuth v5 config: Credentials provider, JWT strategy, admin role in token.
-`src/types/next-auth.d.ts` — module augmentation for role field.
+`src/app/login/page.tsx` â€” clean login page.
+`src/auth.ts` â€” NextAuth v5 config: Credentials provider, JWT strategy, admin role in token.
+`src/types/next-auth.d.ts` â€” module augmentation for role field.
 
-**Step 7** — Admin dashboard + route protection.
+**Step 7** â€” Admin dashboard + route protection.
 `src/app/admin/page.tsx` + `src/components/admin/AdminDashboard.tsx`.
 5 API routes: `GET /api/admin/stats`, `GET /api/admin/waitlist`,
 `POST /api/admin/send-invite`, `POST /api/admin/batch-invite`, `PATCH /api/admin/config`.
-`src/lib/auth/requireAdmin.ts` — server-side admin guard used in all admin routes.
-`src/middleware.ts` — Next.js middleware protecting `/admin` routes via NextAuth JWT role check.
+`src/lib/auth/requireAdmin.ts` â€” server-side admin guard used in all admin routes.
+`src/middleware.ts` â€” Next.js middleware protecting `/admin` routes via NextAuth JWT role check.
 
 > Note: Implementation uses NextAuth JWT role-based protection instead of the ADMIN_SECRET
 > bearer token approach described in the original Step 7 prompt. The middleware reads the
 > JWT, checks `token.role === "admin"`, and redirects to `/login` if not authorized.
 
-### Remaining — what still needs to be built
+### Remaining â€” what still needs to be built
 
-**Step 8 — Onboarding** (Phases 8.1–8.2 done; 8.8 partial — see `mintmark-step8-onboarding.md`)
+**Step 8 â€” Onboarding** (Phases 8.1â€“8.2 done; 8.8 partial â€” see `Cadenz-step8-onboarding.md`)
 
 Phases 8.1 + 8.2 complete as of 2026-04-21. The (app) route group layout,
 `AppSidebar`, `AppBottomNav`, and dashboard stub were also built as part of 8.2.
 
 Remaining:
 
-- **8.3** — OAuth platform connections: GitHub, Gmail, LinkedIn, X, Medium.
+- **8.3** â€” OAuth platform connections: GitHub, Gmail, LinkedIn, X, Medium.
   `/api/connections` GET + DELETE. `/api/connections/[platform]/callback` per platform.
   Encrypted token storage. `PlatformConnectionsStep.tsx` implementation.
-- **8.4** — GitHub commit backfill: Trigger.dev `github-backfill` task.
-  90 days → `unified_activity`. Backfill status polling endpoint.
-- **8.5** — Active platforms + per-platform AI instructions:
+- **8.4** â€” GitHub commit backfill: Trigger.dev `github-backfill` task.
+  90 days â†’ `unified_activity`. Backfill status polling endpoint.
+- **8.5** â€” Active platforms + per-platform AI instructions:
   `/api/user/settings` GET + PATCH. `/api/user/platform-instructions` GET + POST.
-- **8.6** — First manual session log:
-  `/api/activity/session` POST → seeds `unified_activity` + `topic_nodes`.
-- **8.7** — BYOK API key: `/api/user/api-key` POST + DELETE, `/api/user/api-keys` GET.
-- **8.8** — Dashboard page components: D3.js heatmap, week calendar, topic distribution,
+- **8.6** â€” First manual session log:
+  `/api/activity/session` POST â†’ seeds `unified_activity` + `topic_nodes`.
+- **8.7** â€” BYOK API key: `/api/user/api-key` POST + DELETE, `/api/user/api-keys` GET.
+- **8.8** â€” Dashboard page components: D3.js heatmap, week calendar, topic distribution,
   streak counter, empty state. `/api/dashboard/activity` GET. Layout shell already done.
 
-**Step 9** — Trigger.dev v3: `send-batch-invites` task, `cleanup-expired-tokens`
+**Step 9** â€” Trigger.dev v3: `send-batch-invites` task, `cleanup-expired-tokens`
 daily schedule, `weekly-digest` stub.
 
-**Step 10** — Vercel deploy, Brevo domain verification, Upstash Redis, Trigger.dev deploy.
-Note: email provider is Brevo (not Resend — switched during build). Env var is `BREVO_API_KEY`.
+**Step 10** â€” Vercel deploy, Brevo domain verification, Upstash Redis, Trigger.dev deploy.
+Note: email provider is Brevo (not Resend â€” switched during build). Env var is `BREVO_API_KEY`.
 
 ---
 
-## STEP 1 — Project Bootstrap + Stitch MCP
+## STEP 1 â€” Project Bootstrap + Stitch MCP
 
 ### What to do manually first
 
 1. Create a new Next.js project:
 
 ```bash
-npx create-next-app@latest mintmark --typescript --tailwind --app --src-dir --import-alias "@/*"
-cd mintmark
+npx create-next-app@latest Cadenz --typescript --tailwind --app --src-dir --import-alias "@/*"
+cd Cadenz
 ```
 
 2. Install core dependencies:
@@ -144,10 +144,10 @@ claude mcp add stitch \
 claude
 ```
 
-### Claude Code Prompt — Step 1
+### Claude Code Prompt â€” Step 1
 
 ```
-I'm building Mintmark, a personal branding platform. Before writing any code,
+I'm building Cadenz, a personal branding platform. Before writing any code,
 use the Stitch MCP to fetch the design system from my project at:
 https://stitch.withgoogle.com/projects/3017715713759689498
 
@@ -163,26 +163,26 @@ Save this as DESIGN.md in the project root.
 
 Then create the following config files that reference those tokens:
 
-1. tailwind.config.ts — extend the default config with all Mintmark design
+1. tailwind.config.ts â€” extend the default config with all Cadenz design
    tokens from the Stitch export. Use CSS custom properties as the bridge
    so the values work with both Tailwind classes and raw CSS.
 
-2. src/styles/globals.css — define all CSS custom properties from the
+2. src/styles/globals.css â€” define all CSS custom properties from the
    design system. Dark mode by default using the [data-theme="dark"]
    selector, with [data-theme="light"] as the override.
 
-3. src/lib/design.ts — export typed constants for all design tokens so
+3. src/lib/design.ts â€” export typed constants for all design tokens so
    they can be referenced in TypeScript (e.g. for Framer Motion animations
    that need raw values).
 
 The design direction is: dark background, gold/amber accent (coin heritage),
-minimal and dense like Linear or Vercel dashboard. Name "Mintmark" comes from
-the stamp a mint presses on a coin — authentic, certified, from a specific source.
+minimal and dense like Linear or Vercel dashboard. Name "Cadenz" comes from
+the stamp a mint presses on a coin â€” authentic, certified, from a specific source.
 ```
 
 ---
 
-## STEP 2 — Supabase Schema + RLS
+## STEP 2 â€” Supabase Schema + RLS
 
 ### What to do manually first
 
@@ -192,20 +192,20 @@ the stamp a mint presses on a coin — authentic, certified, from a specific sou
 
 ```
 NEXT_PUBLIC_SUPABASE_URL=your_url
-NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=sb_publishable_...   # from Supabase dashboard → API Keys
-SUPABASE_SECRET_KEY=sb_secret_...                         # from Supabase dashboard → API Keys
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=sb_publishable_...   # from Supabase dashboard â†’ API Keys
+SUPABASE_SECRET_KEY=sb_secret_...                         # from Supabase dashboard â†’ API Keys
 AUTH_SECRET=generate_with_openssl_rand_base64_32
 ENCRYPTION_KEY=generate_with_openssl_rand_base64_32
 ```
 
 Note: New Supabase projects (created after Nov 1 2025) use `sb_publishable_` and `sb_secret_`
 keys instead of the legacy JWT anon/service_role keys. Get both from your Supabase dashboard
-under Project Settings → API Keys.
+under Project Settings â†’ API Keys.
 
-### Claude Code Prompt — Step 2
+### Claude Code Prompt â€” Step 2
 
 ```
-Create the complete Supabase database schema for Mintmark's early access system.
+Create the complete Supabase database schema for Cadenz's early access system.
 
 Run this in the Supabase SQL editor (output as a file I can copy):
 
@@ -222,11 +222,11 @@ TABLES NEEDED (early access phase only):
    - id uuid primary key default gen_random_uuid()
    - email text unique not null
    - name text
-   - reason text (why do you want access — optional)
+   - reason text (why do you want access â€” optional)
    - referral_code text unique not null
    - referred_by text (referral_code of whoever referred them)
    - position integer
-   - status text default 'waiting' — constraint: waiting | invited | joined
+   - status text default 'waiting' â€” constraint: waiting | invited | joined
    - email_verified boolean default false
    - verification_token text
    - created_at timestamptz default now()
@@ -273,11 +273,11 @@ RLS RULES:
 - user_settings: users can SELECT/UPDATE their own row.
 
 FUNCTIONS:
-- generate_referral_code() — returns an 8-char alphanumeric code,
+- generate_referral_code() â€” returns an 8-char alphanumeric code,
   uppercase, guaranteed unique in the waitlist table.
   Use this as a trigger on waitlist INSERT to auto-populate referral_code.
 
-- get_waitlist_position(p_email text) — returns the current queue
+- get_waitlist_position(p_email text) â€” returns the current queue
   position for an email based on: original signup order + bonus
   positions from referrals (-5 spots per referral, capped at position 1).
 
@@ -288,17 +288,17 @@ format with Database, Tables, and Insert/Update helper types.
 
 ---
 
-## STEP 3 — Waitlist Landing Page
+## STEP 3 â€” Waitlist Landing Page
 
 ### What to do manually first
 
-- Decide if this lives at `/` (root) or a subdomain like `early.mintmark.app`
-- For now, build it as the root `/` page — it will be replaced when the main app launches
+- Decide if this lives at `/` (root) or a subdomain like `early.Cadenz.app`
+- For now, build it as the root `/` page â€” it will be replaced when the main app launches
 
-### Claude Code Prompt — Step 3
+### Claude Code Prompt â€” Step 3
 
 ```
-Build the Mintmark waitlist landing page at src/app/page.tsx.
+Build the Cadenz waitlist landing page at src/app/page.tsx.
 
 First read DESIGN.md to get the exact design tokens before writing any code.
 
@@ -307,18 +307,18 @@ PAGE SECTIONS (in order, single scrollable page):
 1. HERO SECTION
    - Full viewport height
    - Background: dark, near-black (from DESIGN.md bg primary)
-   - Animated ambient glow — a subtle gold/amber radial gradient that
+   - Animated ambient glow â€” a subtle gold/amber radial gradient that
      slowly pulses. Use Framer Motion animate with repeat: Infinity.
-     Keep it tasteful — like light catching a coin, not a rave.
+     Keep it tasteful â€” like light catching a coin, not a rave.
    - Logo mark: SVG of an M inside a circular stamp/seal shape.
      Gold accent color. ~48px.
-   - Product name: "Mintmark" — large, the hero typeface from DESIGN.md
+   - Product name: "Cadenz" â€” large, the hero typeface from DESIGN.md
    - Tagline: "Stamp your knowledge on the internet"
    - Subline (smaller, muted): "Turn what you learn into content that
-     builds your personal brand. LinkedIn, X, and Medium — all at once."
+     builds your personal brand. LinkedIn, X, and Medium â€” all at once."
    - CTA: The waitlist form (email input + submit button) embedded
-     directly in the hero. Not a link — the form IS the CTA.
-   - Below the form: "Join 0 people on the waitlist" — dynamically
+     directly in the hero. Not a link â€” the form IS the CTA.
+   - Below the form: "Join 0 people on the waitlist" â€” dynamically
      loaded from /api/waitlist/count. Show a skeleton while loading.
    - Entrance animation: content fades in and shifts up 20px on load,
      staggered 100ms between each element.
@@ -330,8 +330,8 @@ PAGE SECTIONS (in order, single scrollable page):
    - Email (required)
    - Name (optional, placeholder: "Your name (optional)")
    - Why do you want access? (optional textarea,
-     placeholder: "What are you hoping to use Mintmark for?")
-   - HONEYPOT: hidden input named "website" — if filled, reject silently
+     placeholder: "What are you hoping to use Cadenz for?")
+   - HONEYPOT: hidden input named "website" â€” if filled, reject silently
      on the server. Never show this field. Use CSS to hide it
      (position absolute, left -9999px), NOT display:none (bots see through that).
 
@@ -340,9 +340,9 @@ PAGE SECTIONS (in order, single scrollable page):
    - Show loading state on button during submission
    - On success: replace form with success state showing:
      * "You're on the list! Check your email to confirm your spot."
-     * Their referral link: mintmark.app/ref/[their_referral_code]
+     * Their referral link: Cadenz.app/ref/[their_referral_code]
      * Copy button for the referral link
-     * "Share your link — move up the queue for every friend who joins"
+     * "Share your link â€” move up the queue for every friend who joins"
    - On error: show inline error, never clear the form
 
    Validation (client + server):
@@ -352,10 +352,10 @@ PAGE SECTIONS (in order, single scrollable page):
 
 3. HOW IT WORKS SECTION
    Three cards in a row (stack on mobile):
-   - "Learn anything" — YouTube, articles, your own notes
-   - "Generate in seconds" — LinkedIn post, X thread, Medium article —
+   - "Learn anything" â€” YouTube, articles, your own notes
+   - "Generate in seconds" â€” LinkedIn post, X thread, Medium article â€”
      all at once, in your voice
-   - "Grow your brand" — track what you share, see what works,
+   - "Grow your brand" â€” track what you share, see what works,
      know what to post next
    Each card: icon (use lucide-react), title, 2-line description.
    Cards should feel like glass/surface tiles, not flat boxes.
@@ -363,27 +363,27 @@ PAGE SECTIONS (in order, single scrollable page):
 
 4. WHO IT'S FOR SECTION
    Horizontal scroll of persona chips on mobile, grid on desktop:
-   Developers • Designers • Marketers • Writers • Students •
-   Entrepreneurs • Consultants • Researchers
+   Developers â€¢ Designers â€¢ Marketers â€¢ Writers â€¢ Students â€¢
+   Entrepreneurs â€¢ Consultants â€¢ Researchers
    Each chip shows an emoji + label. Muted styling, just to communicate breadth.
    Heading: "For anyone who learns and wants to be known for it"
 
 5. SOCIAL PROOF PLACEHOLDER
    "Early access spots are limited" with a progress bar (mock data,
    e.g. 847/1000 spots claimed). Use an amber/gold progress fill.
-   This is intentionally vague — just creates urgency.
+   This is intentionally vague â€” just creates urgency.
 
 6. FOOTER
    - Logo + tagline
    - Links: Privacy Policy, Terms (both link to placeholder /legal pages)
-   - "© 2025 Mintmark"
+   - "Â© 2025 Cadenz"
 
 ANIMATIONS:
 - All sections: scroll-triggered fade-in using Framer Motion's
   whileInView with once: true
 - Form submit button: subtle scale on hover/active
 - Success state: animate in with spring physics
-- No layout shifts — all animations are opacity + transform only
+- No layout shifts â€” all animations are opacity + transform only
 
 MOBILE:
 - Full responsive, mobile-first
@@ -392,43 +392,43 @@ MOBILE:
 - Hero section: reduce font sizes gracefully
 
 PERFORMANCE:
-- No images — all SVG or CSS
-- Keep the JS bundle lean — no unnecessary imports
+- No images â€” all SVG or CSS
+- Keep the JS bundle lean â€” no unnecessary imports
 ```
 
 ---
 
-## STEP 4 — API Routes + Email
+## STEP 4 â€” API Routes + Email
 
-### Claude Code Prompt — Step 4
+### Claude Code Prompt â€” Step 4
 
 ```
-Build the API layer for the Mintmark waitlist system.
+Build the API layer for the Cadenz waitlist system.
 
 Read DESIGN.md first. Then build these files:
 
 --- src/lib/supabase/admin.ts ---
-Admin Supabase client — uses SUPABASE_SECRET_KEY (sb_secret_...), bypasses RLS.
+Admin Supabase client â€” uses SUPABASE_SECRET_KEY (sb_secret_...), bypasses RLS.
 Use @supabase/supabase-js createClient directly (not @supabase/ssr).
 Server-side only. NEVER import in Client Components.
-Export: createAdminClient() — for privileged DB operations (waitlist writes,
+Export: createAdminClient() â€” for privileged DB operations (waitlist writes,
 invite tokens, admin actions).
 
 --- src/lib/supabase/server.ts ---
-Server Supabase client — uses NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY, respects RLS.
+Server Supabase client â€” uses NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY, respects RLS.
 Use @supabase/ssr createServerClient with Next.js cookies().
-Export: createClient() — for Server Components, Route Handlers, Server Actions
+Export: createClient() â€” for Server Components, Route Handlers, Server Actions
 that should respect Row Level Security.
 
 --- src/lib/supabase/client.ts ---
-Browser Supabase client — uses NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY, respects RLS.
+Browser Supabase client â€” uses NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY, respects RLS.
 Use @supabase/ssr createBrowserClient.
-Export: createClient() — for Client Components ("use client") only.
+Export: createClient() â€” for Client Components ("use client") only.
 
 --- src/proxy.ts ---
 Supabase session refresh proxy. Must use @supabase/ssr createServerClient
 with both getAll and setAll cookie methods (reads from request, writes to response).
-Calls supabase.auth.getUser() — NOT getSession() — to refresh tokens on every request.
+Calls supabase.auth.getUser() â€” NOT getSession() â€” to refresh tokens on every request.
 Required by Supabase SSR for correct session handling.
 
 --- src/lib/rate-limit.ts ---
@@ -438,30 +438,30 @@ Export these limiters:
 - apiLimiter: 100 requests per user per minute (fixed window)
 
 Helper function: checkRateLimit(identifier: string, limiter)
-→ returns { success: boolean, reset: number, remaining: number }
+â†’ returns { success: boolean, reset: number, remaining: number }
 
 --- src/lib/encryption.ts ---
 AES-256-GCM encryption for sensitive values.
 Use Node.js crypto module (built-in, no extra deps).
 Export:
-- encrypt(plaintext: string): string — returns base64 encoded
+- encrypt(plaintext: string): string â€” returns base64 encoded
   "iv:authTag:ciphertext"
-- decrypt(encoded: string): string — reverses it
+- decrypt(encoded: string): string â€” reverses it
 - Uses ENCRYPTION_KEY env var (must be 32 bytes / 64 hex chars)
 
 --- src/app/api/waitlist/join/route.ts ---
 POST handler for waitlist signup.
 
 Steps:
-1. Parse request body — extract email, name, reason, referred_by,
+1. Parse request body â€” extract email, name, reason, referred_by,
    website (honeypot), plus any ref query param
-2. Check honeypot — if website field is not empty, return 200 silently
+2. Check honeypot â€” if website field is not empty, return 200 silently
    (don't reveal you're rejecting it)
-3. Rate limit by IP — use waitlistLimiter.
+3. Rate limit by IP â€” use waitlistLimiter.
    If exceeded: return 429 with "Too many signups from this location.
    Try again later."
 4. Validate email format (use a simple regex, no external libraries)
-5. Check if email already on waitlist — if so, return 200 with
+5. Check if email already on waitlist â€” if so, return 200 with
    message "You're already on the list! Check your email."
 6. Generate a 6-char alphanumeric verification token
 7. Insert into waitlist table:
@@ -488,7 +488,7 @@ GET handler: /api/waitlist/verify?token=xxx
 4. If not found: redirect to /?verified=false
 
 --- src/app/api/waitlist/count/route.ts ---
-GET handler — returns total waitlist count.
+GET handler â€” returns total waitlist count.
 Cache this response for 60 seconds (set Cache-Control header).
 Return: { count: number }
 
@@ -502,11 +502,11 @@ Templates to build:
    Props: { name?: string, email: string, verificationUrl: string,
             referralCode: string, referralUrl: string }
    Content:
-   - Subject: "Confirm your spot on the Mintmark waitlist"
-   - Header: Mintmark logo (text-based, styled)
+   - Subject: "Confirm your spot on the Cadenz waitlist"
+   - Header: Cadenz logo (text-based, styled)
    - Body: "Thanks for joining! Confirm your email to lock in your spot."
-   - Big CTA button: "Confirm my spot" → verificationUrl
-   - Section: "Move up the queue" — show referral link,
+   - Big CTA button: "Confirm my spot" â†’ verificationUrl
+   - Section: "Move up the queue" â€” show referral link,
      explain that each referral moves them up
    - Footer: unsubscribe handled by Resend, plain text version required
 
@@ -514,17 +514,17 @@ Templates to build:
    Props: { name?: string, email: string, inviteUrl: string,
             expiresAt: string }
    Content:
-   - Subject: "You're invited to Mintmark — your access is ready"
+   - Subject: "You're invited to Cadenz â€” your access is ready"
    - Body: You've been invited. This link expires in 48 hours.
-   - Big CTA: "Accept your invitation" → inviteUrl
+   - Big CTA: "Accept your invitation" â†’ inviteUrl
    - Warning: "This link is single-use and expires [expiresAt]"
 
 --- src/lib/email/send.ts ---
 Wrapper around Resend.
 Export: sendEmail({ to, subject, react, text })
 Uses RESEND_API_KEY env var.
-Never throws — catches errors, logs them, returns { success: boolean }.
-From address: notifications@mintmark.app
+Never throws â€” catches errors, logs them, returns { success: boolean }.
+From address: notifications@Cadenz.app
 
 Make sure RESEND_API_KEY never reaches the client bundle.
 All email sending happens server-side only.
@@ -532,12 +532,12 @@ All email sending happens server-side only.
 
 ---
 
-## STEP 5 — Referral System
+## STEP 5 â€” Referral System
 
-### Claude Code Prompt — Step 5
+### Claude Code Prompt â€” Step 5
 
 ```
-Build the referral tracking system for Mintmark's waitlist.
+Build the referral tracking system for Cadenz's waitlist.
 
 --- src/app/ref/[code]/page.tsx ---
 When someone visits /ref/[code]:
@@ -551,7 +551,7 @@ referred_by field on the join API call.
 Update src/components/waitlist/WaitlistForm.tsx:
 - On mount, read the referral_code cookie
 - If present, include it as referred_by in the POST body
-- Don't show this to the user — it's invisible tracking
+- Don't show this to the user â€” it's invisible tracking
 
 --- src/app/api/waitlist/referral-stats/route.ts ---
 GET /api/waitlist/referral-stats?email=xxx
@@ -572,26 +572,26 @@ This makes the referral loop feel rewarding immediately.
 
 ---
 
-## STEP 6 — Invite Token System
+## STEP 6 â€” Invite Token System
 
 ### What exists already (added in Step 5 refactor)
 
-`src/lib/config.ts` — already created. Exports:
+`src/lib/config.ts` â€” already created. Exports:
 
-- `REFERRAL_SLOTS_BONUS = 5` — must stay in sync with the `-5 per referral`
+- `REFERRAL_SLOTS_BONUS = 5` â€” must stay in sync with the `-5 per referral`
   logic in the `get_waitlist_position` DB function.
-- `getEarlyAccessLimit(supabase)` — reads `system_config` table key
+- `getEarlyAccessLimit(supabase)` â€” reads `system_config` table key
   `early_access_limit`, falls back to `EARLY_ACCESS_LIMIT` env var, then 100.
-  Import this in admin invite routes (Step 7) — do NOT hardcode the limit.
+  Import this in admin invite routes (Step 7) â€” do NOT hardcode the limit.
 
-### Claude Code Prompt — Step 6
+### Claude Code Prompt â€” Step 6
 
 ```
-Build the invite token system for Mintmark early access.
+Build the invite token system for Cadenz early access.
 
 --- src/lib/tokens.ts ---
 Export:
-- generateInviteToken(): string — cryptographically random
+- generateInviteToken(): string â€” cryptographically random
   32-byte hex string using crypto.randomBytes
 - createInviteToken(email: string): Promise<{ token, expiresAt }>
   Inserts into invite_tokens table, sets expires_at = now() + 48 hours
@@ -600,18 +600,18 @@ Export:
   Checks: token exists, used_at IS NULL, expires_at > now()
   Returns email if valid.
 - consumeInviteToken(token: string): Promise<boolean>
-  Sets used_at = now() on the token. Idempotent — returns false if
+  Sets used_at = now() on the token. Idempotent â€” returns false if
   already used. Must be atomic (use a Supabase RPC with FOR UPDATE).
 
 --- src/app/invite/[token]/page.tsx ---
 The invite acceptance page.
-1. Server component — verify the token server-side on page load
+1. Server component â€” verify the token server-side on page load
 2. If invalid or expired: show an error page with message
    "This invite link has expired or already been used.
    You can rejoin the waitlist for the next batch."
    Include a link back to /?from=expired-invite
 3. If valid: show the signup form (see below)
-4. The token is passed to the form as a prop — never put it in
+4. The token is passed to the form as a prop â€” never put it in
    a hidden input, pass it through a server action instead
 
 --- src/components/auth/InviteSignupForm.tsx ---
@@ -631,7 +631,7 @@ POST handler for invite-based signup.
 6. Update waitlist record: status = 'joined'
 7. Create user_settings row with defaults
 8. Send welcome email via Resend
-9. Return success — client redirects to /dashboard
+9. Return success â€” client redirects to /dashboard
    (which will be the main app, gated)
 
 Security requirements:
@@ -645,15 +645,15 @@ Security requirements:
 
 ---
 
-## STEP 7 — Admin Dashboard
+## STEP 7 â€” Admin Dashboard
 
-### Claude Code Prompt — Step 7
+### Claude Code Prompt â€” Step 7
 
 ```
-Build the Mintmark admin dashboard for managing early access.
+Build the Cadenz admin dashboard for managing early access.
 
-This lives at /admin — protected by a simple admin secret in env vars
-(ADMIN_SECRET). Not a full auth system — just a bearer token check
+This lives at /admin â€” protected by a simple admin secret in env vars
+(ADMIN_SECRET). Not a full auth system â€” just a bearer token check
 in middleware. We'll add proper admin auth in a later phase.
 
 --- src/proxy.ts ---
@@ -688,10 +688,10 @@ Display:
    - Search by email (client-side filter, data already loaded)
    - Status badges: waiting (gray), invited (amber), joined (green)
    - Actions column:
-     * "Send invite" button (status=waiting only) → calls
+     * "Send invite" button (status=waiting only) â†’ calls
        /api/admin/send-invite with the email
      * "Copy invite link" (status=invited, if token not yet used)
-     * "View" → shows a detail modal with full signup info
+     * "View" â†’ shows a detail modal with full signup info
    - Pagination: 50 rows per page
 
 3. BATCH INVITE SECTION
@@ -702,7 +702,7 @@ Display:
    - Shows a confirmation modal before sending
 
 --- src/app/api/admin/send-invite/route.ts ---
-POST handler (admin only — verify ADMIN_SECRET in header).
+POST handler (admin only â€” verify ADMIN_SECRET in header).
 Body: { email: string }
 1. Call getEarlyAccessLimit(adminSupabase) from src/lib/config.ts
 2. Count rows in waitlist where status IN ('invited', 'joined')
@@ -740,35 +740,35 @@ Dark theme, dense table layout like Linear's issue list.
 
 ---
 
-## STEP 8 — Early Access Gate
+## STEP 8 â€” Early Access Gate
 
-### Claude Code Prompt — Step 8
+### Claude Code Prompt â€” Step 8
 
 ```
-Add the early access gate to the main Mintmark app.
+Add the early access gate to the main Cadenz app.
 
-The main app will live at /app/* routes (not yet built — just the gate for now).
+The main app will live at /app/* routes (not yet built â€” just the gate for now).
 
 --- src/proxy.ts (update) ---
 Extend the existing proxy:
 - If path starts with /app or /dashboard:
   1. Check for a valid NextAuth session
   2. If no session: redirect to /invite-required
-     (not /login — we want to be clear it's invite-only)
+     (not /login â€” we want to be clear it's invite-only)
   3. If session exists but user was somehow created without
      going through invite flow: show a blocked state
 
 --- src/app/invite-required/page.tsx ---
 Shown when someone tries to access the app without an invite.
 Content:
-- Mintmark logo
-- "Mintmark is currently invite-only"
+- Cadenz logo
+- "Cadenz is currently invite-only"
 - "We're letting people in gradually to make sure everything
   works great."
 - If they have a referral link in their cookies (referral_code cookie):
   show "You were referred! You have a higher chance of getting
   an early invite."
-- CTA: "Join the waitlist" → back to /
+- CTA: "Join the waitlist" â†’ back to /
 - If they're already on the waitlist (check via email cookie
   if we stored one): "You're already on the list at position #X.
   We'll email you when your invite is ready."
@@ -778,10 +778,10 @@ Brand voice: "You're almost in."
 
 --- src/app/dashboard/page.tsx (stub) ---
 For now, just a placeholder that shows:
-- "Welcome to Mintmark, [user name]"
+- "Welcome to Cadenz, [user name]"
 - "You're one of our early access members."
 - A card saying "The full app is being built. Check back soon."
-- The Mintmark logo and tagline
+- The Cadenz logo and tagline
 
 This will be replaced with the real dashboard in the next build phase.
 
@@ -796,12 +796,12 @@ Set up NextAuth v5 at src/auth.ts with:
 
 ---
 
-## STEP 9 — Trigger.dev Background Jobs
+## STEP 9 â€” Trigger.dev Background Jobs
 
-### Claude Code Prompt — Step 9
+### Claude Code Prompt â€” Step 9
 
 ```
-Set up Trigger.dev v3 for Mintmark's background jobs.
+Set up Trigger.dev v3 for Cadenz's background jobs.
 
 Install and initialize:
 npm install @trigger.dev/sdk@v3
@@ -816,7 +816,7 @@ payload: { count: number, strategy: 'position' | 'referrals',
 
 Steps:
 1. Query Supabase for top N waiting emails using strategy
-2. For each email (process sequentially, not Promise.all —
+2. For each email (process sequentially, not Promise.all â€”
    we don't want to hammer Resend):
    a. Generate invite token
    b. Send InviteEmail via Resend
@@ -827,7 +827,7 @@ Steps:
 Add retry: { maxAttempts: 2 } on the task config.
 
 --- src/trigger/weekly-digest.ts ---
-task id: "weekly-digest" (stub for Phase 5 — create the file but
+task id: "weekly-digest" (stub for Phase 5 â€” create the file but
 mark it as a TODO stub so it's ready for later)
 
 --- src/trigger/cleanup-expired-tokens.ts ---
@@ -846,7 +846,7 @@ Add TRIGGER_SECRET_KEY to the env vars list in the README.
 
 ---
 
-## STEP 10 — Deploy
+## STEP 10 â€” Deploy
 
 ### What to do manually
 
@@ -866,14 +866,14 @@ Add TRIGGER_SECRET_KEY to the env vars list in the README.
    ADMIN_SECRET
    TRIGGER_SECRET_KEY
    ```
-4. Set up Resend: verify mintmark.app domain, add DNS records
+4. Set up Resend: verify Cadenz.app domain, add DNS records
 5. Set up Upstash: create a Redis database, copy credentials
 6. Deploy Trigger.dev: `npx trigger.dev@v3 deploy`
 
-### Claude Code Prompt — Step 10
+### Claude Code Prompt â€” Step 10
 
 ```
-Do a pre-deploy audit of the Mintmark early access codebase.
+Do a pre-deploy audit of the Cadenz early access codebase.
 
 Check every file and flag any issues in these categories:
 
@@ -896,7 +896,7 @@ PERFORMANCE AUDIT:
 CODE QUALITY:
 - TypeScript: no any types, all DB operations use the typed
   Database types from src/types/database.ts
-- All error paths handled — no unhandled promise rejections
+- All error paths handled â€” no unhandled promise rejections
 - All Resend calls wrapped in try/catch
 
 MISSING PIECES:
@@ -916,39 +916,39 @@ Copy this into your Vercel project settings:
 
 | Variable                             | Source                                                                   | Client?        |
 | ------------------------------------ | ------------------------------------------------------------------------ | -------------- |
-| NEXT_PUBLIC_SUPABASE_URL             | Supabase dashboard → API Keys                                            | ✅ yes         |
-| NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY | Supabase dashboard → API Keys (`sb_publishable_...`)                     | ✅ yes         |
-| SUPABASE_SECRET_KEY                  | Supabase dashboard → API Keys (`sb_secret_...`)                          | ❌ server only |
-| AUTH_SECRET                          | `openssl rand -base64 32`                                                | ❌ server only |
-| NEXTAUTH_URL                         | your domain                                                              | ❌ server only |
-| ENCRYPTION_KEY                       | `openssl rand -hex 32`                                                   | ❌ server only |
-| RESEND_API_KEY                       | resend.com dashboard                                                     | ❌ server only |
-| UPSTASH_REDIS_REST_URL               | upstash.com dashboard                                                    | ❌ server only |
-| UPSTASH_REDIS_REST_TOKEN             | upstash.com dashboard                                                    | ❌ server only |
-| ADMIN_SECRET                         | make up a strong password                                                | ❌ server only |
-| TRIGGER_SECRET_KEY                   | trigger.dev dashboard                                                    | ❌ server only |
-| EARLY_ACCESS_LIMIT                   | number of invite slots (default 100, overridden by system_config DB row) | ❌ server only |
+| NEXT_PUBLIC_SUPABASE_URL             | Supabase dashboard â†’ API Keys                                            | âœ… yes         |
+| NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY | Supabase dashboard â†’ API Keys (`sb_publishable_...`)                     | âœ… yes         |
+| SUPABASE_SECRET_KEY                  | Supabase dashboard â†’ API Keys (`sb_secret_...`)                          | âŒ server only |
+| AUTH_SECRET                          | `openssl rand -base64 32`                                                | âŒ server only |
+| NEXTAUTH_URL                         | your domain                                                              | âŒ server only |
+| ENCRYPTION_KEY                       | `openssl rand -hex 32`                                                   | âŒ server only |
+| RESEND_API_KEY                       | resend.com dashboard                                                     | âŒ server only |
+| UPSTASH_REDIS_REST_URL               | upstash.com dashboard                                                    | âŒ server only |
+| UPSTASH_REDIS_REST_TOKEN             | upstash.com dashboard                                                    | âŒ server only |
+| ADMIN_SECRET                         | make up a strong password                                                | âŒ server only |
+| TRIGGER_SECRET_KEY                   | trigger.dev dashboard                                                    | âŒ server only |
+| EARLY_ACCESS_LIMIT                   | number of invite slots (default 100, overridden by system_config DB row) | âŒ server only |
 
 ---
 
 ## TIPS FOR WORKING WITH CLAUDE CODE
 
-1. **Always start with DESIGN.md** — Every UI prompt should begin with
+1. **Always start with DESIGN.md** â€” Every UI prompt should begin with
    "Read DESIGN.md first." Claude Code will use those tokens exactly.
 
-2. **One step at a time** — Don't combine steps in one prompt.
+2. **One step at a time** â€” Don't combine steps in one prompt.
    Each prompt above is scoped deliberately.
 
-3. **When Stitch MCP returns design data** — Ask Claude Code to
+3. **When Stitch MCP returns design data** â€” Ask Claude Code to
    reconcile it with any hardcoded values and update DESIGN.md
    if the tokens changed.
 
-4. **After each step** — Run `npm run build` and fix any TypeScript
+4. **After each step** â€” Run `npm run build` and fix any TypeScript
    errors before moving to the next step. Accumulated errors compound.
 
-5. **DB migrations** — Always ask for the full migration SQL,
+5. **DB migrations** â€” Always ask for the full migration SQL,
    not just the diff. Run it in Supabase's SQL editor, not via code.
 
-6. **Testing the flow** — After Step 6, manually test the full
-   journey: signup → email → verify → invite → accept → dashboard.
+6. **Testing the flow** â€” After Step 6, manually test the full
+   journey: signup â†’ email â†’ verify â†’ invite â†’ accept â†’ dashboard.
    Fix any gaps before Step 7.

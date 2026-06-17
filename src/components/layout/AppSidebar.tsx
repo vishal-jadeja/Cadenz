@@ -48,7 +48,7 @@ export function AppSidebar({ userName, userAvatar }: AppSidebarProps) {
         {!sidebarCollapsed && <LogoMark size={28} />}
         {!sidebarCollapsed && (
           <span className="ml-2.5 font-heading text-sm font-semibold text-foreground truncate flex-1">
-            Mintmark
+            Cadenz
           </span>
         )}
         <button

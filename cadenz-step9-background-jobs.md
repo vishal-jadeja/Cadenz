@@ -1,4 +1,4 @@
-# Mintmark — Step 9: Background Jobs (Trigger.dev)
+﻿# Cadenz â€” Step 9: Background Jobs (Trigger.dev)
 
 ## Overview
 
@@ -6,14 +6,14 @@ Step 9 establishes the background job layer. It moves work that should not
 block API routes into Trigger.dev tasks, and creates the scaffolding that
 Phase 2 features (daily intelligence, topic extraction) will grow into.
 
-The existing synchronous admin invite routes stay intact — this step adds
+The existing synchronous admin invite routes stay intact â€” this step adds
 background equivalents alongside them, and lays down the cron infrastructure.
 
 ```
-Phase 9.1  →  send-batch-invites task          ✅ DONE
-Phase 9.2  →  cleanup-expired-tokens cron      ✅ DONE
-Phase 9.3  →  daily-intelligence stub          ✅ DONE
-Phase 9.4  →  topic-extraction stub            ✅ DONE
+Phase 9.1  â†’  send-batch-invites task          âœ… DONE
+Phase 9.2  â†’  cleanup-expired-tokens cron      âœ… DONE
+Phase 9.3  â†’  daily-intelligence stub          âœ… DONE
+Phase 9.4  â†’  topic-extraction stub            âœ… DONE
 
 ```
 
@@ -21,20 +21,20 @@ Phase 9.4  →  topic-extraction stub            ✅ DONE
 
 ## Existing Trigger.dev foundation (from Phase 8.4)
 
-- `trigger.config.ts` — project config, scans `./src/trigger`
-- `src/trigger/index.ts` — task registry
-- `src/trigger/github-backfill.ts` — canonical task pattern example
+- `trigger.config.ts` â€” project config, scans `./src/trigger`
+- `src/trigger/index.ts` â€” task registry
+- `src/trigger/github-backfill.ts` â€” canonical task pattern example
 - SDK: `@trigger.dev/sdk v4.4.3`
 
 ---
 
-## Phase 9.1 — send-batch-invites
+## Phase 9.1 â€” send-batch-invites
 
 **Goal:** Background equivalent of `POST /api/admin/batch-invite`. Lets
 the admin trigger large invite batches without risking an HTTP timeout,
 and gives Trigger.dev retry/observability over each email send.
 
-The existing synchronous route is kept intact — it's fine for the admin
+The existing synchronous route is kept intact â€” it's fine for the admin
 dashboard's interactive flow. This task enables future automation
 (scheduled drips, webhook-triggered invites, etc.).
 
@@ -51,7 +51,7 @@ Steps:
 4. For each candidate in parallel (Promise.allSettled):
    a. Generate 64-char hex token
    b. Insert into invite_tokens (email, token, expires_at = +48h)
-   c. Update waitlist status → 'invited'
+   c. Update waitlist status â†’ 'invited'
    d. Send InviteEmail via sendEmail()
 5. Delete admin:stats from Redis cache
 6. Return { invited: number, failed: string[] }
@@ -62,7 +62,7 @@ Reuses: `createAdminClient`, `Redis` patterns from existing batch-invite route.
 
 ---
 
-## Phase 9.2 — cleanup-expired-tokens
+## Phase 9.2 â€” cleanup-expired-tokens
 
 **Goal:** Daily cron that resets stale invites. Invite tokens expire after
 48 hours. If a user never accepted, they remain stuck as 'invited' on the
@@ -91,7 +91,7 @@ Steps:
 
 ---
 
-## Phase 9.3 — daily-intelligence stub
+## Phase 9.3 â€” daily-intelligence stub
 
 **Goal:** Scaffold the task that Phase 2's intelligence layer will fill.
 Having the task registered now means Phase 2 can implement the body
@@ -117,7 +117,7 @@ Phase 1 stub: logs payload, returns { status: 'not_implemented' }
 
 ---
 
-## Phase 9.4 — topic-extraction stub
+## Phase 9.4 â€” topic-extraction stub
 
 **Goal:** Scaffold the task that will auto-tag topics from session notes
 and free-text in Phase 2. Called after a session is logged with notes.
@@ -143,7 +143,7 @@ Phase 1 stub: logs payload, returns { status: 'not_implemented' }
 
 | File | Action |
 |------|--------|
-| `mintmark-step9-background-jobs.md` | New spec (this file) |
+| `Cadenz-step9-background-jobs.md` | New spec (this file) |
 | `src/trigger/send-batch-invites.ts` | New task |
 | `src/trigger/cleanup-expired-tokens.ts` | New cron task |
 | `src/trigger/daily-intelligence.ts` | New stub task |
@@ -167,12 +167,12 @@ UPSTASH_REDIS_REST_TOKEN # already present
 
 ## Verification
 
-1. `npx trigger.dev@latest dev` — all 5 tasks register without errors
+1. `npx trigger.dev@latest dev` â€” all 5 tasks register without errors
 2. Manually trigger `send-batch-invites` with `{ count: 1 }` from Trigger.dev dashboard
-   → waitlist entry moves to 'invited', invite email sent, admin:stats cache cleared
+   â†’ waitlist entry moves to 'invited', invite email sent, admin:stats cache cleared
 3. Manually trigger `cleanup-expired-tokens` from Trigger.dev dashboard
-   → expired tokens deleted, affected emails reverted to 'waiting'
+   â†’ expired tokens deleted, affected emails reverted to 'waiting'
 4. Manually trigger `daily-intelligence` with `{ userId: "any" }`
-   → returns `{ status: 'not_implemented' }`, no error
+   â†’ returns `{ status: 'not_implemented' }`, no error
 5. Manually trigger `topic-extraction` with test payload
-   → returns `{ status: 'not_implemented' }`, no error
+   â†’ returns `{ status: 'not_implemented' }`, no error

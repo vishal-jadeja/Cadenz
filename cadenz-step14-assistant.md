@@ -1,8 +1,8 @@
-# Mintmark — Step 14: AI Assistant
+﻿# Cadenz â€” Step 14: AI Assistant
 
 ## Overview
 
-Step 14 builds `/assistant` — a full-page chat interface scoped strictly to the
+Step 14 builds `/assistant` â€” a full-page chat interface scoped strictly to the
 user's own data. Not a general chatbot. A thinking partner who already knows
 what the user has been studying, building, and writing.
 
@@ -10,17 +10,17 @@ The assistant in this step uses direct context retrieval (recent notes + activit
 + topic_nodes). pgvector similarity search is deferred to Phase 2 when note
 embeddings exist. The assistant gracefully degrades when context is thin.
 
-The BYOK AI adapter from Step 13 (`src/lib/ai/byok.ts`) is reused here — no
+The BYOK AI adapter from Step 13 (`src/lib/ai/byok.ts`) is reused here â€” no
 new AI abstraction layer needed.
 
 ```
-Phase 14.1  →  DB schema (ai_conversations, ai_messages)         ⬜
-Phase 14.2  →  Types update (database.ts)                        ⬜
-Phase 14.3  →  Context retrieval (src/lib/assistant/retrieval.ts) ⬜
-Phase 14.4  →  API routes (conversations, messages, streaming)   ⬜
-Phase 14.5  →  Query hooks + streaming hook                      ⬜
-Phase 14.6  →  Assistant page + components                       ⬜
-Phase 14.7  →  Proxy protection + nav update                     ⬜
+Phase 14.1  â†’  DB schema (ai_conversations, ai_messages)         â¬œ
+Phase 14.2  â†’  Types update (database.ts)                        â¬œ
+Phase 14.3  â†’  Context retrieval (src/lib/assistant/retrieval.ts) â¬œ
+Phase 14.4  â†’  API routes (conversations, messages, streaming)   â¬œ
+Phase 14.5  â†’  Query hooks + streaming hook                      â¬œ
+Phase 14.6  â†’  Assistant page + components                       â¬œ
+Phase 14.7  â†’  Proxy protection + nav update                     â¬œ
 ```
 
 ---
@@ -28,37 +28,37 @@ Phase 14.7  →  Proxy protection + nav update                     ⬜
 ## Architecture
 
 ```
-/assistant (server component — auth check)
-  └── AssistantClient (client)
-        ├── ConversationSidebar
-        │     ├── "New conversation" button
-        │     └── ConversationList (title + date)
-        └── ChatArea
-              ├── MessageThread
-              │     └── MessageBubble (user | assistant)
-              │           └── SourceCitation (collapsible, assistant only)
-              └── MessageInput
-                    ├── Textarea (⌘Enter to send)
-                    └── Send button
+/assistant (server component â€” auth check)
+  â””â”€â”€ AssistantClient (client)
+        â”œâ”€â”€ ConversationSidebar
+        â”‚     â”œâ”€â”€ "New conversation" button
+        â”‚     â””â”€â”€ ConversationList (title + date)
+        â””â”€â”€ ChatArea
+              â”œâ”€â”€ MessageThread
+              â”‚     â””â”€â”€ MessageBubble (user | assistant)
+              â”‚           â””â”€â”€ SourceCitation (collapsible, assistant only)
+              â””â”€â”€ MessageInput
+                    â”œâ”€â”€ Textarea (âŒ˜Enter to send)
+                    â””â”€â”€ Send button
 ```
 
 Data flow:
 ```
 User sends message
-  → POST /api/assistant/conversations/[id]/messages
-  → Server: retrieval.buildContext(userId, message)
-            → get recent notes (last 30, text search for now)
-            → get topic_nodes (top 10 by last_activity_at)
-            → get unified_activity (last 30 days summary)
-  → Server: build system prompt with context
-  → Server: stream response from BYOK adapter
-  → Client: reads stream via ReadableStream, appends chunks to UI
-  → Server: on stream complete, save full message + sources to DB
+  â†’ POST /api/assistant/conversations/[id]/messages
+  â†’ Server: retrieval.buildContext(userId, message)
+            â†’ get recent notes (last 30, text search for now)
+            â†’ get topic_nodes (top 10 by last_activity_at)
+            â†’ get unified_activity (last 30 days summary)
+  â†’ Server: build system prompt with context
+  â†’ Server: stream response from BYOK adapter
+  â†’ Client: reads stream via ReadableStream, appends chunks to UI
+  â†’ Server: on stream complete, save full message + sources to DB
 ```
 
 ---
 
-## Phase 14.1 — DB Schema
+## Phase 14.1 â€” DB Schema
 
 File: `supabase/phase14_schema.sql`
 
@@ -104,7 +104,7 @@ create policy "users manage own ai_messages"
 
 ---
 
-## Phase 14.2 — Types Update
+## Phase 14.2 â€” Types Update
 
 Add `AiConversation` and `AiMessage` (with `sources` typed as `AiSource[]`) to
 `src/types/database.ts`.
@@ -120,7 +120,7 @@ export interface AiSource {
 
 ---
 
-## Phase 14.3 — Context Retrieval
+## Phase 14.3 â€” Context Retrieval
 
 File: `src/lib/assistant/retrieval.ts`
 
@@ -147,7 +147,7 @@ export async function buildContext(
 
 ### Implementation
 
-**Notes retrieval (Phase 1 — text search)**
+**Notes retrieval (Phase 1 â€” text search)**
 ```sql
 SELECT id, title, body, tags
 FROM notes
@@ -192,8 +192,8 @@ ORDER BY activity_date DESC
 ### System prompt template
 
 ```
-You are the AI assistant inside Mintmark. You help the user understand and
-build on their own knowledge. You are scoped strictly to their data — you do
+You are the AI assistant inside Cadenz. You help the user understand and
+build on their own knowledge. You are scoped strictly to their data â€” you do
 not answer general knowledge questions unless they relate to something the
 user has been studying.
 
@@ -211,12 +211,12 @@ user has been studying.
   say so clearly and redirect to what you do know.
 - Always cite which note, topic, or activity informed your answer.
 - Never auto-save, never take action on the user's behalf.
-- Keep responses focused — the user can ask follow-up questions.
+- Keep responses focused â€” the user can ask follow-up questions.
 ```
 
 ---
 
-## Phase 14.4 — API Routes
+## Phase 14.4 â€” API Routes
 
 ### `GET /api/assistant/conversations`
 
@@ -246,7 +246,7 @@ user has been studying.
 - Auth: requireSession, verify conversation belongs to user
 - Body: `{ content: string }`
 - Steps:
-  1. Check BYOK adapter — if null, return 402 `{ error: 'no_api_key' }`
+  1. Check BYOK adapter â€” if null, return 402 `{ error: 'no_api_key' }`
   2. Save user message to DB immediately
   3. Build context via `buildContext(userId, content)`
   4. Start streaming via adapter
@@ -267,7 +267,7 @@ data: {"type":"done"}
 
 ---
 
-## Phase 14.5 — Query Hooks + Streaming Hook
+## Phase 14.5 â€” Query Hooks + Streaming Hook
 
 File: `src/lib/queries/assistant.ts`
 
@@ -280,7 +280,7 @@ useDeleteConversation()         // DELETE (mutation)
 
 ### Streaming hook: `useStreamMessage`
 
-Not a standard TanStack Query hook — streaming requires managing a
+Not a standard TanStack Query hook â€” streaming requires managing a
 `ReadableStream` with React state.
 
 ```typescript
@@ -294,7 +294,7 @@ interface UseStreamMessageReturn {
 ```
 
 Implementation:
-- Uses `fetch()` directly (not Axios — Axios does not support streaming)
+- Uses `fetch()` directly (not Axios â€” Axios does not support streaming)
 - Reads `response.body` as a `ReadableStream`, decodes SSE events
 - Appends `chunk` events to `streamingText`
 - On `sources` event: sets `sources` state
@@ -304,7 +304,7 @@ Implementation:
 
 ---
 
-## Phase 14.6 — Assistant Page + Components
+## Phase 14.6 â€” Assistant Page + Components
 
 ### `src/app/(app)/assistant/page.tsx`
 
@@ -317,17 +317,17 @@ Renders `ConversationSidebar` + `ChatArea` in a split layout.
 On mobile: sidebar hidden, accessible via a toggle button.
 
 No-key state: if API key check returns 402, renders a full-page prompt:
-"To use the AI assistant, add your API key in [Settings → API Keys]."
-Never an error message — always a clear next action.
+"To use the AI assistant, add your API key in [Settings â†’ API Keys]."
+Never an error message â€” always a clear next action.
 
 ### `src/components/assistant/ConversationSidebar.tsx`
 
-- "New conversation" button at top → `useCreateConversation()`, then select new ID
+- "New conversation" button at top â†’ `useCreateConversation()`, then select new ID
 - `ConversationList`: renders each conversation as a button
   - Title (truncated to 1 line)
   - Relative date (e.g. "2 hours ago")
   - Active: highlighted
-  - Long-press or hover → delete icon → `useDeleteConversation()` with confirm
+  - Long-press or hover â†’ delete icon â†’ `useDeleteConversation()` with confirm
 
 ### `src/components/assistant/MessageThread.tsx`
 
@@ -358,29 +358,29 @@ Props: `sources: AiSource[]`
 ### `src/components/assistant/MessageInput.tsx`
 
 - Auto-growing textarea (max 4 lines before scroll)
-- ⌘Enter (Mac) / Ctrl+Enter (Windows) to send
+- âŒ˜Enter (Mac) / Ctrl+Enter (Windows) to send
 - Disabled while `isStreaming`
 - Send button with `whileTap` scale
 
 ---
 
-## Phase 14.7 — Proxy Protection + Nav
+## Phase 14.7 â€” Proxy Protection + Nav
 
 Add to `src/proxy.ts`:
 ```
-/assistant               → requireSession
-/api/assistant(.*)       → requireSession
+/assistant               â†’ requireSession
+/api/assistant(.*)       â†’ requireSession
 ```
 
 The sidebar nav item for `/assistant` already exists in `nav-items.ts` from
-the app shell. No nav change needed unless it was set as a placeholder — verify
+the app shell. No nav change needed unless it was set as a placeholder â€” verify
 it points to `/assistant`.
 
 ---
 
 ## Out of scope for Step 14 (Phase 2)
 
-- pgvector similarity search (deferred — no note embeddings yet)
+- pgvector similarity search (deferred â€” no note embeddings yet)
 - Conversation title auto-generation from first message
 - Message editing or regeneration
 - Cmd+K shortcut to open assistant (deferred to command palette step)
@@ -393,13 +393,13 @@ intelligence pipeline is filling `topic_nodes` with real data.
 
 ## Key rules (carry into implementation)
 
-- `user_id` filter is applied before every DB query in retrieval.ts —
+- `user_id` filter is applied before every DB query in retrieval.ts â€”
   application layer checks first, RLS is the safety net.
 - If adapter returns null (no API key): return HTTP 402 with
-  `{ error: 'no_api_key' }` — never 500, never a generic error.
+  `{ error: 'no_api_key' }` â€” never 500, never a generic error.
 - Streaming: use native `fetch()` in the streaming hook, not Axios.
 - Sources are always shown, never hidden. User must be able to see
   what data informed each response.
-- The assistant never auto-saves anything. Suggestions only — user decides.
+- The assistant never auto-saves anything. Suggestions only â€” user decides.
 - Context is capped: max 12 notes + 10 topics + 30 days activity.
-  Never retrieve more — cost and latency.
+  Never retrieve more â€” cost and latency.

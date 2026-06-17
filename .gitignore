@@ -40,5 +40,5 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
-# mintmark-early-access-guide.md
-# mintmark-project-intelligence.md
+# cadenz-early-access-guide.md
+# cadenz-project-intelligence.md

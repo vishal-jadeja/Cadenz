@@ -358,7 +358,7 @@ export function ApiKeysTab() {
         <h2 className="font-heading text-lg font-semibold text-foreground">AI API Keys</h2>
         <p className="mt-1 font-body text-sm text-muted-foreground">
           Your keys power the AI assistant and Content Studio. Used only when you invoke an AI
-          feature — Mintmark never pays for your AI calls.
+          feature — Cadenz never pays for your AI calls.
         </p>
       </div>
 

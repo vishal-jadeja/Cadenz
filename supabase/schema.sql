@@ -1,5 +1,5 @@
 -- =============================================================================
--- Mintmark — Early Access Database Schema
+-- Cadenz — Early Access Database Schema
 -- =============================================================================
 
 
@@ -9,7 +9,7 @@
 
 -- ---------------------------------------------------------------------------
 -- users
--- Stores authenticated Mintmark users (post-waitlist, post-invite).
+-- Stores authenticated Cadenz users (post-waitlist, post-invite).
 -- Populated by the server (service role) after an invite is accepted.
 -- ---------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS public.users (

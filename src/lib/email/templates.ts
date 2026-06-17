@@ -116,7 +116,7 @@ const styles = {
 // ── WaitlistConfirmationEmail ─────────────────────────────────────────────────
 
 export const WAITLIST_CONFIRMATION_SUBJECT =
-  "Confirm your spot on the Mintmark waitlist"
+  "Confirm your spot on the Cadenz waitlist"
 
 interface WaitlistConfirmationEmailProps {
   name?: string
@@ -137,7 +137,7 @@ export function WaitlistConfirmationEmail({
     Html,
     { lang: "en" },
     createElement(Head, null),
-    createElement(Preview, null, "Confirm your spot on the Mintmark waitlist"),
+    createElement(Preview, null, "Confirm your spot on the Cadenz waitlist"),
     createElement(
       Body,
       { style: styles.body },
@@ -146,7 +146,7 @@ export function WaitlistConfirmationEmail({
         { style: styles.container },
 
         // Logo
-        createElement(Text, { style: styles.logoText }, "Mintmark"),
+        createElement(Text, { style: styles.logoText }, "Cadenz"),
 
         // Heading
         createElement(Heading, { style: styles.heading }, "You're almost in."),
@@ -155,7 +155,7 @@ export function WaitlistConfirmationEmail({
         createElement(
           Text,
           { style: styles.body_text },
-          `${greeting} Thanks for joining the Mintmark waitlist! Click the button below to confirm your email and lock in your spot.`
+          `${greeting} Thanks for joining the Cadenz waitlist! Click the button below to confirm your email and lock in your spot.`
         ),
 
         // CTA
@@ -198,7 +198,7 @@ export function WaitlistConfirmationEmail({
         createElement(
           Text,
           { style: styles.footer },
-          "You received this email because you signed up for the Mintmark waitlist. If you didn't request this, you can safely ignore it."
+          "You received this email because you signed up for the Cadenz waitlist. If you didn't request this, you can safely ignore it."
         )
       )
     )
@@ -208,7 +208,7 @@ export function WaitlistConfirmationEmail({
 // ── InviteEmail ───────────────────────────────────────────────────────────────
 
 export const INVITE_SUBJECT =
-  "You're invited to Mintmark — your access is ready"
+  "You're invited to Cadenz — your access is ready"
 
 interface InviteEmailProps {
   name?: string
@@ -227,7 +227,7 @@ export function InviteEmail({ name, inviteUrl, expiresAt }: InviteEmailProps) {
     createElement(
       Preview,
       null,
-      "Your Mintmark invitation is ready — accept before it expires."
+      "Your Cadenz invitation is ready — accept before it expires."
     ),
     createElement(
       Body,
@@ -237,7 +237,7 @@ export function InviteEmail({ name, inviteUrl, expiresAt }: InviteEmailProps) {
         { style: styles.container },
 
         // Logo
-        createElement(Text, { style: styles.logoText }, "Mintmark"),
+        createElement(Text, { style: styles.logoText }, "Cadenz"),
 
         // Heading
         createElement(
@@ -250,7 +250,7 @@ export function InviteEmail({ name, inviteUrl, expiresAt }: InviteEmailProps) {
         createElement(
           Text,
           { style: styles.body_text },
-          `${greeting} You've been invited to join Mintmark early access. Click below to accept — this link expires on ${expiresAt}.`
+          `${greeting} You've been invited to join Cadenz early access. Click below to accept — this link expires on ${expiresAt}.`
         ),
 
         // CTA
@@ -289,7 +289,7 @@ export function InviteEmail({ name, inviteUrl, expiresAt }: InviteEmailProps) {
         createElement(
           Text,
           { style: styles.footer },
-          "You received this email because you were on the Mintmark waitlist. Questions? Reply to this email."
+          "You received this email because you were on the Cadenz waitlist. Questions? Reply to this email."
         )
       )
     )

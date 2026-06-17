@@ -12,7 +12,7 @@ export function PrivacyTab() {
       <div>
         <h2 className="font-heading text-lg font-semibold text-foreground">Data & Privacy</h2>
         <p className="mt-1 font-body text-sm text-muted-foreground">
-          Full data controls are coming in Phase 2. Every piece of data Mintmark tracks is
+          Full data controls are coming in Phase 2. Every piece of data Cadenz tracks is
           viewable, exportable, and deletable — on your schedule.
         </p>
       </div>
