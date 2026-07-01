@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cadenz — Engineering Deep Dive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: oklch(0.09 0.003 82);
+    --surface: oklch(0.12 0.003 82);
+    --surface-2: oklch(0.145 0.003 82);
+    --surface-3: oklch(0.175 0.003 82);
+    --border: oklch(1 0 0 / 9%);
+    --border-strong: oklch(1 0 0 / 16%);
+    --text: oklch(0.97 0.003 82);
+    --text-muted: oklch(0.70 0.003 82);
+    --text-faint: oklch(0.46 0.003 82);
+    --gold: oklch(0.78 0.155 82);
+    --gold-dim: oklch(0.64 0.155 78);
+    --gold-muted: oklch(0.78 0.155 82 / 12%);
+    --gold-border: oklch(0.78 0.155 82 / 25%);
+    --red: oklch(0.65 0.22 27);
+    --green: oklch(0.72 0.18 150);
+    --blue: oklch(0.65 0.18 245);
+    --yellow: oklch(0.88 0.18 95);
+    --font-display: 'Sora', ui-sans-serif, sans-serif;
+    --font-body: 'DM Sans', ui-sans-serif, system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono', ui-monospace, 'Cascadia Code', monospace;
+  }
+
+  *{ box-sizing: border-box; }
+  html{ scroll-behavior: smooth; }
+  body{
+    margin:0; background: var(--bg); color: var(--text);
+    font-family: var(--font-body); font-size: 15px; line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection{ background: var(--gold-muted); color: var(--gold); }
+
+  a{ color: var(--gold); text-decoration: none; }
+  a:hover{ text-decoration: underline; }
+
+  code, pre{ font-family: var(--font-mono); }
+  code{
+    background: var(--surface-3); color: var(--gold);
+    padding: 1px 6px; border-radius: 4px; font-size: 0.85em;
+  }
+  pre{
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 8px; padding: 16px 18px; overflow-x: auto;
+    font-size: 13px; line-height: 1.55; color: oklch(0.85 0.02 82);
+  }
+  pre code{ background: none; padding: 0; color: inherit; }
+
+  /* ---------- Layout ---------- */
+  .layout{ display: flex; max-width: 1400px; margin: 0 auto; }
+
+  nav.toc{
+    position: sticky; top: 0; align-self: flex-start;
+    width: 260px; flex-shrink: 0; height: 100vh; overflow-y: auto;
+    padding: 32px 20px 40px 28px; border-right: 1px solid var(--border);
+  }
+  nav.toc::-webkit-scrollbar{ width: 6px; }
+  nav.toc::-webkit-scrollbar-thumb{ background: var(--surface-3); border-radius: 4px; }
+
+  .toc-brand{ display:flex; align-items:center; gap:10px; margin-bottom: 28px; }
+  .toc-mark{
+    width: 30px; height: 30px; border-radius: 8px;
+    background: linear-gradient(135deg, var(--gold), var(--gold-dim));
+    display:flex; align-items:center; justify-content:center;
+    font-family: var(--font-display); font-weight: 800; color: var(--bg); font-size: 15px;
+    box-shadow: 0 0 20px oklch(0.78 0.155 82 / 25%);
+  }
+  .toc-brand-text{ font-family: var(--font-display); font-weight: 700; font-size: 16px; letter-spacing: 0.2px; }
+  .toc-brand-sub{ font-size: 10.5px; color: var(--text-faint); font-family: var(--font-mono); letter-spacing: 0.5px; }
+
+  nav.toc h4{
+    font-family: var(--font-mono); font-size: 10.5px; text-transform: uppercase;
+    letter-spacing: 1px; color: var(--text-faint); margin: 22px 0 8px;
+  }
+  nav.toc a{
+    display:block; color: var(--text-muted); font-size: 13px; padding: 5px 10px;
+    border-radius: 6px; margin-bottom: 1px; border-left: 2px solid transparent;
+  }
+  nav.toc a:hover{ background: var(--surface-2); color: var(--text); text-decoration:none; }
+  nav.toc a.active{ color: var(--gold); background: var(--gold-muted); border-left-color: var(--gold); }
+
+  main{ flex: 1; min-width: 0; padding: 56px 64px 120px; max-width: 900px; }
+
+  /* ---------- Hero ---------- */
+  .hero{ margin-bottom: 64px; }
+  .hero-eyebrow{
+    font-family: var(--font-mono); font-size: 11px; color: var(--gold);
+    letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 14px;
+  }
+  h1.hero-title{
+    font-family: var(--font-display); font-size: 44px; font-weight: 800;
+    line-height: 1.1; margin: 0 0 16px; letter-spacing: -0.5px;
+  }
+  .hero-title .accent{ color: var(--gold); }
+  .hero-lede{ font-size: 17px; color: var(--text-muted); max-width: 640px; margin-bottom: 28px; }
+  .hero-pills{ display:flex; flex-wrap:wrap; gap: 8px; }
+  .pill{
+    font-family: var(--font-mono); font-size: 11.5px; padding: 5px 11px;
+    background: var(--surface-2); border: 1px solid var(--border); border-radius: 999px;
+    color: var(--text-muted);
+  }
+  .pill b{ color: var(--gold); font-weight: 500; }
+
+  /* ---------- Sections ---------- */
+  section{ margin-bottom: 68px; scroll-margin-top: 24px; }
+  .section-num{
+    font-family: var(--font-mono); font-size: 12px; color: var(--gold);
+    letter-spacing: 1px;
+  }
+  h2{
+    font-family: var(--font-display); font-size: 27px; font-weight: 700;
+    margin: 6px 0 6px; letter-spacing: -0.2px;
+  }
+  .section-sub{ color: var(--text-muted); font-size: 14.5px; margin-bottom: 26px; max-width: 680px; }
+  h3{ font-family: var(--font-display); font-size: 18px; font-weight: 600; margin: 32px 0 12px; }
+  h4{ font-family: var(--font-body); font-size: 14.5px; font-weight: 600; margin: 20px 0 8px; color: var(--gold); }
+  p{ margin: 0 0 14px; color: oklch(0.88 0.005 82); }
+  ul, ol{ padding-left: 22px; margin: 0 0 14px; color: oklch(0.88 0.005 82); }
+  li{ margin-bottom: 6px; }
+  strong{ color: var(--text); font-weight: 600; }
+
+  hr.divider{ border: none; border-top: 1px solid var(--border); margin: 0 0 68px; }
+
+  /* ---------- Tables ---------- */
+  table{ width: 100%; border-collapse: collapse; margin: 0 0 20px; font-size: 13.5px; }
+  th{
+    text-align: left; font-family: var(--font-mono); font-size: 11px; text-transform: uppercase;
+    letter-spacing: 0.5px; color: var(--text-faint); font-weight: 500;
+    padding: 8px 12px; border-bottom: 1px solid var(--border-strong);
+  }
+  td{ padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: top; color: oklch(0.85 0.005 82); }
+  tr:last-child td{ border-bottom: none; }
+  td code{ white-space: nowrap; }
+
+  /* ---------- Callouts ---------- */
+  .callout{
+    background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--gold);
+    border-radius: 8px; padding: 16px 18px; margin: 0 0 18px;
+  }
+  .callout-label{
+    font-family: var(--font-mono); font-size: 10.5px; text-transform: uppercase; letter-spacing: 1px;
+    color: var(--gold); margin-bottom: 8px; display:block; font-weight: 600;
+  }
+  .callout.tradeoff{ border-left-color: var(--blue); }
+  .callout.tradeoff .callout-label{ color: var(--blue); }
+  .callout.limitation{ border-left-color: var(--yellow); }
+  .callout.limitation .callout-label{ color: var(--yellow); }
+  .callout.risk{ border-left-color: var(--red); }
+  .callout.risk .callout-label{ color: var(--red); }
+  .callout p:last-child{ margin-bottom: 0; }
+  .callout blockquote{ margin: 0; font-style: italic; color: var(--text-muted); }
+
+  /* ---------- Cards / grid ---------- */
+  .grid-2{ display:grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+  .card{
+    background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px 18px;
+  }
+  .card h4{ margin-top: 0; }
+  .card p:last-child{ margin-bottom: 0; }
+
+  /* ---------- Phase accordion ---------- */
+  details.phase{
+    background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+    margin-bottom: 10px; overflow: hidden;
+  }
+  details.phase summary{
+    cursor: pointer; padding: 14px 18px; font-family: var(--font-display); font-weight: 600;
+    font-size: 15px; list-style: none; display:flex; align-items:center; gap: 10px;
+  }
+  details.phase summary::-webkit-details-marker{ display:none; }
+  details.phase summary::before{
+    content: '▸'; color: var(--gold); font-size: 12px; transition: transform 0.15s ease;
+  }
+  details.phase[open] summary::before{ transform: rotate(90deg); }
+  details.phase .phase-body{ padding: 0 18px 18px; border-top: 1px solid var(--border); }
+  details.phase .phase-body{ padding-top: 14px; }
+  .status-badge{
+    font-family: var(--font-mono); font-size: 10px; padding: 2px 9px; border-radius: 999px;
+    margin-left: auto; letter-spacing: 0.3px;
+  }
+  .status-badge.done{ background: oklch(0.72 0.18 150 / 15%); color: var(--green); }
+  .status-badge.pending{ background: oklch(0.88 0.18 95 / 15%); color: var(--yellow); }
+  .status-badge.spec{ background: oklch(0.65 0.18 245 / 15%); color: var(--blue); }
+
+  /* ---------- Diagram ---------- */
+  .diagram{
+    background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+    padding: 22px; margin-bottom: 20px; font-family: var(--font-mono); font-size: 12.5px;
+  }
+  .flow{ display:flex; align-items:center; flex-wrap: wrap; gap: 8px; }
+  .flow-node{
+    background: var(--surface-2); border: 1px solid var(--border-strong); border-radius: 6px;
+    padding: 8px 14px; color: var(--text);
+  }
+  .flow-node.accent{ border-color: var(--gold-border); background: var(--gold-muted); color: var(--gold); }
+  .flow-arrow{ color: var(--text-faint); }
+
+  /* ---------- misc ---------- */
+  .kicker-list{ list-style: none; padding: 0; }
+  .kicker-list li{ padding-left: 20px; position: relative; }
+  .kicker-list li::before{ content: '—'; position: absolute; left: 0; color: var(--gold); }
+
+  footer{
+    border-top: 1px solid var(--border); margin-top: 40px; padding-top: 28px;
+    color: var(--text-faint); font-size: 12.5px; font-family: var(--font-mono);
+  }
+
+  @media (max-width: 960px){
+    nav.toc{ display:none; }
+    main{ padding: 40px 24px 100px; }
+    .grid-2{ grid-template-columns: 1fr; }
+    h1.hero-title{ font-size: 32px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="layout">
+  <nav class="toc" id="toc">
+    <div class="toc-brand">
+      <div class="toc-mark">C</div>
+      <div>
+        <div class="toc-brand-text">Cadenz</div>
+        <div class="toc-brand-sub">ENGINEERING DEEP DIVE</div>
+      </div>
+    </div>
+
+    <h4>Overview</h4>
+    <a href="#overview">Product &amp; Philosophy</a>
+    <a href="#stack">Tech Stack</a>
+
+    <h4>Architecture</h4>
+    <a href="#state">State Management</a>
+    <a href="#database">Database &amp; RLS</a>
+    <a href="#auth">Auth &amp; Security</a>
+
+    <h4>Build Log</h4>
+    <a href="#phase1">Phase 1 — Early Access</a>
+    <a href="#phase2">Phase 2 — Main App</a>
+
+    <h4>Engineering Judgment</h4>
+    <a href="#tradeoffs">Key Tradeoffs</a>
+    <a href="#limitations">Known Limitations</a>
+    <a href="#retrospective">Retrospective</a>
+  </nav>
+
+  <main>
+
+    <div class="hero">
+      <div class="hero-eyebrow">Engineering Deep Dive · July 2026</div>
+      <h1 class="hero-title">Cadenz — <span class="accent">architecture, decisions</span><br>&amp; tradeoffs</h1>
+      <p class="hero-lede">
+        A personal branding and productivity platform: an AI layer over a user's intellectual life that
+        happens to make posting effortless. This document walks through the stack, the schema, the
+        security model, and — more importantly — the specific tradeoffs made and why, including the
+        ones that didn't fully resolve.
+      </p>
+      <div class="hero-pills">
+        <span class="pill">Next.js <b>16.2</b></span>
+        <span class="pill">React <b>19.2</b></span>
+        <span class="pill">TypeScript</span>
+        <span class="pill">Supabase / Postgres <b>+ RLS</b></span>
+        <span class="pill">TanStack Query <b>v5</b></span>
+        <span class="pill">Zustand <b>v5</b></span>
+        <span class="pill">NextAuth <b>v5 beta</b></span>
+        <span class="pill">Trigger.dev <b>v3</b></span>
+        <span class="pill">Upstash Redis</span>
+        <span class="pill">D3.js</span>
+      </div>
+    </div>
+
+    <!-- =========================================================== -->
+    <section id="overview">
+      <div class="section-num">01</div>
+      <h2>Product &amp; Philosophy</h2>
+      <p class="section-sub">What Cadenz is, deliberately, and what it refuses to be.</p>
+
+      <p>
+        <strong>Cadenz</strong> (renamed from an earlier working title, "Mintmark") takes its name from the
+        stamp a mint presses into a coin to certify authenticity and origin. Tagline: <em>"Stamp your
+        knowledge on the internet."</em> The product observes what a user is actually doing — commits,
+        session logs, notes — and surfaces it as personal-brand content, rather than asking the user to
+        invent something to post.
+      </p>
+
+      <div class="callout">
+        <span class="callout-label">Core philosophy</span>
+        <blockquote>"Observe first. Understand always. Act only when ready."</blockquote>
+        <p>Restated as the design constraint behind every feature: the app must deliver value to a user
+        who never manually posts anything. Passive observation is the product; publishing is an optional
+        output on top of it.</p>
+      </div>
+
+      <p>Explicit anti-positioning, stated directly in the project's own planning docs:</p>
+      <ul class="kicker-list">
+        <li>Not a social media scheduler (Buffer/Hootsuite category)</li>
+        <li>Not a content-generation machine</li>
+        <li>Not a general-purpose AI chatbot</li>
+        <li>Not a Pomodoro / time-tracking tool</li>
+        <li>Not an analytics dashboard — post performance is never a user-facing feature</li>
+      </ul>
+
+      <p>Two build phases, one already shipped:</p>
+      <div class="grid-2">
+        <div class="card">
+          <h4>Phase 1 — Early Access ✅ complete</h4>
+          <p>Waitlist landing page, referral-weighted queue position, invite-only account creation,
+          admin dashboard for managing the invite pipeline.</p>
+        </div>
+        <div class="card">
+          <h4>Phase 2 — Main App 🟡 in progress</h4>
+          <p>Onboarding, unified activity heatmap, Notes, Settings, Content Studio, AI Assistant —
+          with Notion sync, a browser extension, and public portfolios queued for later phases.</p>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- =========================================================== -->
+    <section id="stack">
+      <div class="section-num">02</div>
+      <h2>Tech Stack &amp; Rationale</h2>
+      <p class="section-sub">Every choice below was made for a specific reason stated in the project's
+      own build docs — not defaults picked out of habit.</p>
+
+      <table>
+        <tr><th>Layer</th><th>Choice</th><th>Why</th></tr>
+        <tr>
+          <td>Framework</td>
+          <td>Next.js 16.2, React 19.2, TypeScript (strict)</td>
+          <td>Next 16 renamed <code>middleware.ts</code> → <code>proxy.ts</code> and changed enough
+          conventions that the project's own AGENTS.md flags it as "not the Next.js you know" — a
+          reminder to verify against installed docs rather than training data.</td>
+        </tr>
+        <tr>
+          <td>Server state</td>
+          <td>TanStack Query v5</td>
+          <td>Single source of truth for anything that comes from an API. Hard rule: never
+          <code>useState</code> + <code>useEffect</code> to fetch data.</td>
+        </tr>
+        <tr>
+          <td>UI / cross-component state</td>
+          <td>Zustand v5</td>
+          <td>Patches a specific gap in TanStack Query: mutations aren't shared across hook instances.
+          If component A triggers a mutation, component B has no built-in way to know it succeeded.
+          Zustand flags (e.g. <code>uiStore.waitlistJoined</code>) are the signal.</td>
+        </tr>
+        <tr>
+          <td>HTTP client</td>
+          <td>Shared Axios instance (<code>withCredentials: true</code>)</td>
+          <td>One instance, everywhere — except the AI assistant's streaming hook, which uses native
+          <code>fetch()</code> because Axios doesn't support streaming response bodies. Documented
+          exception, not an inconsistency.</td>
+        </tr>
+        <tr>
+          <td>Database</td>
+          <td>Supabase (Postgres + Row Level Security)</td>
+          <td>RLS enabled on every table with no exceptions, treated as a non-negotiable baseline
+          rather than a per-table judgment call.</td>
+        </tr>
+        <tr>
+          <td>Auth</td>
+          <td>NextAuth v5 (beta), Credentials provider, JWT sessions</td>
+          <td>Invite-only signup means there's no external OAuth identity for the core account — JWT
+          avoids a database session table for a login path that's just email + password.</td>
+        </tr>
+        <tr>
+          <td>Email</td>
+          <td>Brevo + React Email</td>
+          <td>Switched from Resend mid-build. Kept as a visible decision in the docs rather than
+          silently overwritten — the early spec still references Resend, later steps reference Brevo.</td>
+        </tr>
+        <tr>
+          <td>Rate limiting / cache</td>
+          <td>Upstash Redis</td>
+          <td>Per-endpoint sliding/fixed-window limits (waitlist join, invite accept, OAuth connect,
+          BYOK key save all have distinct limits) plus TTL caching for heatmap/admin stats reads.</td>
+        </tr>
+        <tr>
+          <td>Background jobs</td>
+          <td>Trigger.dev v3</td>
+          <td>Chosen explicitly over hand-rolled queues: gives parallelism, <code>triggerAndWait</code>,
+          retries, timeouts, and observability "and nothing else is needed."</td>
+        </tr>
+        <tr>
+          <td>AI orchestration</td>
+          <td>Native TypeScript + Trigger.dev tasks, BYOK adapter (Anthropic/OpenAI/Gemini/Groq)</td>
+          <td>Explicit rejection of agent frameworks (no LangGraph, no CrewAI, no LangChain) — the
+          orchestration need is a bounded fan-out/critic/revise loop, not a general agent runtime.
+          BYOK also means Cadenz never pays for a user's AI usage.</td>
+        </tr>
+        <tr>
+          <td>Heatmap / graph rendering</td>
+          <td>D3.js</td>
+          <td>Explicit rule against pulling in a third-party heatmap library for what is a 52×7 grid
+          and a force-directed topic graph — both cheap to own directly.</td>
+        </tr>
+        <tr>
+          <td>Deployment</td>
+          <td>Vercel + Supabase + Trigger.dev Cloud</td>
+          <td>API function timeout raised 10s → 30s in <code>vercel.json</code> specifically for batch
+          invite sends and OAuth token exchange, which don't fit the default window.</td>
+        </tr>
+      </table>
+
+      <h4>Query defaults</h4>
+      <p>Set once in <code>QueryProvider.tsx</code> and deliberately conservative:</p>
+      <pre><code>staleTime: 5 * 60 * 1000   // 5 minutes
+retry: 1
+refetchOnWindowFocus: false
+refetchOnReconnect: false
+// no global refetchInterval — polling is opt-in per hook</code></pre>
+      <p>Polling only exists where there's a real async job to watch: GitHub backfill status (5 retries,
+      3s apart) and Content Studio generation status (2s interval, switched off once the job reaches a
+      terminal state).</p>
+    </section>
+
+    <hr class="divider">
+
+    <!-- =========================================================== -->
+    <section id="state">
+      <div class="section-num">03</div>
+      <h2>State Management Split</h2>
+      <p class="section-sub">Three tiers, one rule each — not a matter of taste, a matter of where the
+      data actually lives.</p>
+
+      <div class="diagram">
+        <div class="flow">
+          <div class="flow-node accent">Server state<br><small>API data, mutations</small></div>
+          <span class="flow-arrow">→</span>
+          <div class="flow-node">TanStack Query<br><small>src/lib/queries/</small></div>
+        </div>
+        <div class="flow" style="margin-top:12px;">
+          <div class="flow-node accent">Cross-component UI state<br><small>flags, filters, wizard step</small></div>
+          <span class="flow-arrow">→</span>
+          <div class="flow-node">Zustand<br><small>src/stores/</small></div>
+        </div>
+        <div class="flow" style="margin-top:12px;">
+          <div class="flow-node accent">Local ephemeral state<br><small>inputs, toggles, one-time reads</small></div>
+          <span class="flow-arrow">→</span>
+          <div class="flow-node">useState only</div>
+        </div>
+      </div>
+
+      <p>The Zustand layer exists to solve one narrow, concrete problem rather than a general "global
+      state is convenient" instinct: <strong>TanStack Query mutations are not shared across hook
+      instances.</strong> If the waitlist form triggers <code>useJoinWaitlist()</code>, the success page
+      component rendered elsewhere in the tree has no way to know that happened — hence
+      <code>uiStore.waitlistJoined</code> set inside the mutation's <code>onSuccess</code> and read
+      wherever else it's needed.</p>
+
+      <p>Three stores exist today: <code>uiStore</code> (waitlist-joined flag, command palette, sidebar),
+      <code>adminStore</code> (admin table filters + pagination), <code>onboardingStore</code> (wizard
+      step, connected platforms, BYOK-skipped flag).</p>
+    </section>
+
+    <hr class="divider">
+
+    <!-- =========================================================== -->
+    <section id="database">
+      <div class="section-num">04</div>
+      <h2>Database &amp; Row Level Security</h2>
+      <p class="section-sub">Every table has RLS. Every mutation is also filtered by <code>user_id</code>
+      in application code first — RLS is the backstop, not the only guard.</p>
+
+      <h3>Core tables (Phase 1)</h3>
+      <table>
+        <tr><th>Table</th><th>Purpose</th></tr>
+        <tr><td><code>users</code></td><td>Core account row. <code>password_hash</code> populated only via the
+          <code>accept_invite_account</code> RPC; <code>role</code> gates admin access.</td></tr>
+        <tr><td><code>waitlist</code></td><td>Signup queue: email, name, auto-generated <code>referral_code</code>,
+          <code>referred_by</code>, status (<code>waiting</code> / <code>invited</code> / <code>joined</code>).</td></tr>
+        <tr><td><code>invite_tokens</code></td><td>Single-use, 48-hour-expiry tokens tying an email to
+          an invite.</td></tr>
+        <tr><td><code>user_settings</code></td><td>One row per user (PK = FK). Theme, timezone,
+          <code>active_platforms</code>, onboarding progress. <strong>Admins never get a row here</strong> —
+          the proxy redirects them away from any page that assumes one exists.</td></tr>
+        <tr><td><code>system_config</code></td><td>Key/value runtime config (invite cap, referral bonus).
+          Service-role read/write only.</td></tr>
+      </table>
+
+      <h3>The referral bonus function</h3>
+      <p>The standout piece of SQL in the project — the entire "refer 5 friends, jump 5 spots per
+      referral, floor at position 1" business rule lives in a single Postgres function, mirrored in
+      application code (<code>REFERRAL_SLOTS_BONUS = 5</code> in <code>src/lib/config.ts</code>) with a
+      comment that the two must be kept in sync:</p>
+      <pre><code>CREATE OR REPLACE FUNCTION public.get_waitlist_position(p_email text)
+RETURNS integer LANGUAGE plpgsql STABLE AS $$
+DECLARE
+  v_referral_code  text;
+  v_base_position  integer;
+  v_referral_count integer;
+  v_effective      integer;
+BEGIN
+  SELECT referral_code, row_number() OVER (ORDER BY created_at ASC)::integer
+  INTO v_referral_code, v_base_position
+  FROM public.waitlist WHERE email = p_email;
+
+  IF NOT FOUND THEN RETURN NULL; END IF;
+
+  SELECT COUNT(*)::integer INTO v_referral_count
+  FROM public.waitlist WHERE referred_by = v_referral_code;
+
+  -- Each referral moves the person 5 spots forward, minimum position 1
+  v_effective := GREATEST(1, v_base_position - (v_referral_count * 5));
+  RETURN v_effective;
+END;
+$$;</code></pre>
+
+      <h3>Atomic invite acceptance</h3>
+      <p>Account creation from an invite token has to satisfy two constraints at once: never let two
+      concurrent requests redeem the same token, and never burn the token if account creation fails
+      partway through. Both are handled inside a single <code>SECURITY DEFINER</code> function using row
+      locking, rather than as separate API-route steps:</p>
+      <pre><code>CREATE OR REPLACE FUNCTION public.accept_invite_account(
+  p_token text, p_name text, p_password_hash text, p_timezone text DEFAULT 'UTC'
+) RETURNS json LANGUAGE plpgsql SECURITY DEFINER AS $$
+DECLARE
+  v_invite  public.invite_tokens%ROWTYPE;
+  v_user_id uuid;
+BEGIN
+  -- 1. Lock the token row — prevents concurrent double-redemption
+  SELECT * INTO v_invite FROM public.invite_tokens
+  WHERE token = p_token AND used_at IS NULL AND expires_at > now()
+  FOR UPDATE;
+
+  IF NOT FOUND THEN
+    RETURN json_build_object('error', 'invalid_token');
+  END IF;
+
+  IF EXISTS (SELECT 1 FROM public.users WHERE email = v_invite.email) THEN
+    RETURN json_build_object('error', 'already_registered');
+  END IF;
+
+  INSERT INTO public.users (email, name, password_hash)
+  VALUES (v_invite.email, p_name, p_password_hash)
+  RETURNING id INTO v_user_id;
+
+  INSERT INTO public.user_settings (user_id, timezone, active_platforms)
+  VALUES (v_user_id, p_timezone, '[]');
+
+  -- token marked used_at + waitlist.status = 'joined' follow in the same transaction
+  ...
+END;
+$$;</code></pre>
+      <p>This replaced an earlier two-step API-route design (verify token → create user as separate
+      requests) once the concurrent-redemption edge case was identified — the RPC makes the whole
+      operation one transaction instead of two round trips with a race condition between them.</p>
+
+      <h3>Avoiding N+1 in the admin list</h3>
+      <p><code>get_admin_waitlist</code> computes a per-row referral count with a self-join and
+      <code>GROUP BY</code> in the same query that fetches the page, rather than one count query per
+      row:</p>
+      <pre><code>SELECT w.id, w.email, w.referral_code, w.referred_by,
+       get_waitlist_position(w.email) AS position, w.status, w.created_at,
+       COUNT(w2.id)::integer AS referral_count
+FROM public.waitlist w
+LEFT JOIN public.waitlist w2 ON w2.referred_by = w.referral_code
+WHERE (p_status IS NULL OR w.status = p_status)
+  AND (p_search IS NULL OR w.email ILIKE '%' || p_search || '%')
+GROUP BY w.id
+...</code></pre>
+
+      <h3>Phase 8 — the activity backbone</h3>
+      <table>
+        <tr><th>Table</th><th>Notes</th></tr>
+        <tr><td><code>platform_connections</code></td><td>OAuth state for GitHub / Gmail / LinkedIn / X /
+          Medium. Disconnect is a soft delete (<code>is_active = false</code>) — there's no user-facing
+          DELETE policy; hard deletes are service-role only.</td></tr>
+        <tr><td><code>unified_activity</code></td><td>One row per <code>(user_id, activity_date, source)</code>
+          — the UNIQUE constraint is what makes <code>ON CONFLICT DO UPDATE</code> upserts idempotent
+          across GitHub backfill, session logs, and notes. <strong>No authenticated INSERT policy at
+          all</strong> — writes must go through the service-role admin client. A comment in the schema
+          spells this out for future developers: using the RLS-respecting client here "will silently
+          fail... this is intentional."</td></tr>
+        <tr><td><code>topic_nodes</code></td><td>Per-user topic counters, incremented with raw
+          <code>UPDATE ... SET x = x + 1</code> rather than read-modify-write from the app.</td></tr>
+        <tr><td><code>api_keys</code></td><td>BYOK keys, AES-256-GCM encrypted at rest, one row per
+          <code>(user_id, provider)</code>.</td></tr>
+        <tr><td><code>platform_instructions</code></td><td>Per-platform tone/format rules for content
+          generation. The <code>tone</code> CHECK constraint was widened from 4 to 7 values in a follow-up
+          migration once the UI grew past the original set — schema evolving after the fact rather than
+          over-designing it up front.</td></tr>
+      </table>
+
+      <div class="callout">
+        <span class="callout-label">Design note</span>
+        <p>Platform <em>connections</em> (observation — GitHub, Gmail) and <em>active platforms</em>
+        (publishing — LinkedIn, X, Medium) are treated as two separate concepts everywhere: separate
+        tables, separate UI sections, never conflated in an API response. Connecting GitHub says nothing
+        about whether a user wants to publish there — because they can't; GitHub isn't a publishing
+        target at all.</p>
+      </div>
+
+      <h3>Phase 12 — Notes</h3>
+      <p><code>folders</code> and <code>notes</code>, with <code>notes.folder_id</code> set to
+      <code>ON DELETE SET NULL</code> — deleting a folder unfiles its notes rather than deleting user
+      content. <code>embedding vector(1536)</code>, <code>notion_page_id</code>, and
+      <code>notion_synced_at</code> are intentionally absent from this schema, not just unused — pgvector
+      search and Notion sync are Phase 2 additions that didn't need speculative columns sitting empty
+      until then.</p>
+    </section>
+
+    <hr class="divider">
+
+    <!-- =========================================================== -->
+    <section id="auth">
+      <div class="section-num">05</div>
+      <h2>Auth &amp; Security</h2>
+      <p class="section-sub">JWT sessions, a proxy that gates by role before any page code runs, and
+      envelope encryption for anything sensitive at rest.</p>
+
+      <h3>Session flow</h3>
+      <div class="diagram">
+        <div class="flow">
+          <div class="flow-node">Credentials provider</div>
+          <span class="flow-arrow">→</span>
+          <div class="flow-node">bcrypt.compare()<br><small>via service-role client</small></div>
+          <span class="flow-arrow">→</span>
+          <div class="flow-node accent">JWT<br><small>id + role claim</small></div>
+          <span class="flow-arrow">→</span>
+          <div class="flow-node">proxy.ts<br><small>role-based routing</small></div>
+        </div>
+      </div>
+      <p>NextAuth's <code>jwt()</code> callback stashes <code>id</code> and <code>role</code> on the token
+      at sign-in; <code>session()</code> copies both onto <code>session.user</code>. That's what lets the
+      proxy make a routing decision from the JWT alone, with no per-request database round trip.</p>
+
+      <h3>Proxy-level route protection</h3>
+      <p>Next.js 16 renamed <code>middleware.ts</code> to <code>proxy.ts</code>. It wraps every request in
+      <code>auth((request) =&gt; {...})</code> and enforces three rules before any page component runs:</p>
+      <ul>
+        <li><code>/admin</code> and <code>/api/admin/*</code>: no session → redirect/401; authenticated
+        but non-admin → redirect/403 (deliberately not a 404, to avoid confirming the route exists via
+        an inconsistent error, but also to avoid leaking existence through 404-vs-403 timing) — the
+        actual doc rationale given is to prevent route enumeration.</li>
+        <li>General app routes (<code>/dashboard</code>, <code>/onboarding</code>, <code>/notes</code>,
+        <code>/api/user</code>, <code>/api/connections</code>, <code>/api/notes</code>,
+        <code>/api/folders</code>, <code>/api/activity</code>): unauthenticated → redirect to
+        <code>/login?callbackUrl=...</code>.</li>
+        <li>An authenticated <strong>admin</strong> hitting a user page (<code>/dashboard</code>,
+        <code>/onboarding</code>, <code>/notes</code>) gets redirected to <code>/admin</code> — this is
+        the actual mechanism behind "admins have no <code>user_settings</code> row": they're never
+        allowed to reach a page that assumes one exists.</li>
+      </ul>
+
+      <h3>Key handling</h3>
+      <table>
+        <tr><th>Key</th><th>Role</th><th>Used in</th></tr>
+        <tr><td><code>NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY</code></td><td>Anon key, respects RLS, safe
+          in the browser</td><td><code>client.ts</code>, <code>server.ts</code></td></tr>
+        <tr><td><code>SUPABASE_SECRET_KEY</code></td><td>Service role, bypasses RLS</td>
+          <td><code>admin.ts</code> only, via plain <code>createClient()</code> — not the SSR helper,
+          since it's a stateless server-only client with no concept of a user session</td></tr>
+      </table>
+      <p>The SDK derives both the <code>apikey</code> and <code>Authorization: Bearer</code> headers from
+      the key passed to <code>createClient()</code> — a documented rule against overriding those manually
+      in <code>global.headers</code>, since doing so would silently break auth in a way that's easy to
+      miss in review.</p>
+
+      <h3>Encryption at rest</h3>
+      <p>OAuth tokens (<code>platform_connections</code>) and BYOK keys (<code>api_keys</code>) are
+      encrypted with AES-256-GCM using Node's built-in <code>crypto</code> — no extra dependency for
+      something the standard library already does well. Format is
+      <code>iv:authTag:ciphertext</code>, base64-encoded. The API-key GET route is written to never
+      return the decrypted value, "not even to the authenticated user" — the UI can confirm a key
+      exists and show its provider, never its contents.</p>
+
+      <h3>Other concrete measures</h3>
+      <ul>
+        <li>Honeypot field on the waitlist form positioned off-screen with <code>left: -9999px</code>
+        rather than <code>display: none</code>, because bots specifically check for the latter.</li>
+        <li>Per-endpoint rate limits sized to the endpoint's risk: waitlist join 10/hr/IP, invite accept
+        5/hr, BYOK key save 20/min (flagged sensitive), Content Studio generation 10/min (expensive —
+        runs against the user's own key).</li>
+        <li>PKCE specifically for LinkedIn and X OAuth; GitHub/Gmail/Medium use standard OAuth2.</li>
+        <li>Gmail's OAuth scope is locked to <code>gmail.readonly</code> at the scope-request level, not
+        just enforced in application code afterward.</li>
+        <li>Account deletion deletes across tables in an explicit, documented order — largest/most
+        dependent tables first, <code>users</code> row last — rather than relying on a single cascading
+        FK chain that can hold locks too long on large tables.</li>
+      </ul>
+    </section>
+
+    <hr class="divider">
+
+    <!-- =========================================================== -->
+    <section id="phase1">
+      <div class="section-num">06</div>
+      <h2>Phase 1 — Early Access System</h2>
+      <p class="section-sub">Live and complete: waitlist, referral queue, invite acceptance, admin
+      dashboard.</p>
+
+      <details class="phase" open>
+        <summary>Waitlist &amp; referral tracking <span class="status-badge done">shipped</span></summary>
+        <div class="phase-body">
+          <p>Landing page embeds the waitlist form and a live count (<code>/api/waitlist/count</code>,
+          cached 60s via <code>Cache-Control</code>). Visiting <code>/ref/[code]</code> sets a 30-day,
+          non-httpOnly <code>referral_code</code> cookie (non-httpOnly because the form needs to read it
+          client-side); the form silently attaches it as <code>referred_by</code> on submit — invisible
+          to the referred user.</p>
+          <p>Success-state copy branches on position: users already inside the top
+          <code>REFERRAL_SLOTS_BONUS</code> (5) spots see "you're near the top" instead of a "move up
+          faster" CTA that would make no sense for them.</p>
+        </div>
+      </details>
+
+      <details class="phase">
+        <summary>Invite acceptance <span class="status-badge done">shipped</span></summary>
+        <div class="phase-body">
+          <p><code>/invite/[token]</code> verifies the token server-side before rendering, then passes it
+          to the client form as a prop rather than a hidden input — kept out of the DOM where it isn't
+          necessary. Token consumption is atomic with account creation via <code>accept_invite_account</code>
+          (see Database section) so a failed signup never burns a valid invite.</p>
+        </div>
+      </details>
+
+      <details class="phase">
+        <summary>Admin dashboard <span class="status-badge done">shipped</span></summary>
+        <div class="phase-body">
+          <p>Five API routes: stats, paginated waitlist, single invite, batch invite, config. Batch
+          invites clamp the requested count to remaining capacity under <code>getEarlyAccessLimit()</code>
+          rather than either erroring outright or silently over-sending past the cap. Batches larger than
+          20 are handed to a Trigger.dev job instead of processed inline, so the HTTP response doesn't
+          time out — small batches stay synchronous, large ones go async.</p>
+          <div class="callout">
+            <span class="callout-label">Implementation drift, logged not hidden</span>
+            <p>The original spec assumed a simple bearer-token (<code>ADMIN_SECRET</code>) gate for
+            <code>/admin</code>. The shipped version replaced this with full NextAuth JWT role-based
+            protection instead — a stronger mechanism, and the deviation is called out explicitly in the
+            build docs rather than left as an undocumented change.</p>
+          </div>
+        </div>
+      </details>
+    </section>
+
+    <hr class="divider">
+
+    <!-- =========================================================== -->
+    <section id="phase2">
+      <div class="section-num">07</div>
+      <h2>Phase 2 — Main App</h2>
+      <p class="section-sub">Onboarding through to the AI assistant — mostly shipped, two features still
+      at the spec stage.</p>
+
+      <details class="phase">
+        <summary>Onboarding wizard <span class="status-badge done">shipped</span></summary>
+        <div class="phase-body">
+          <p>8 sub-phases: DB schema extension, wizard shell, OAuth connections (5 platforms), GitHub
+          commit backfill, active-platform selection with per-platform AI instructions, first manual
+          session log, optional BYOK step, and the dashboard scaffold itself.</p>
+          <p>GitHub backfill (90 days of commit history via Trigger.dev, paginated Search API calls,
+          upserted into <code>unified_activity</code>) is treated as critical path rather than a
+          nice-to-have — it's what makes the dashboard non-empty on day one instead of showing a blank
+          heatmap to a brand-new user.</p>
+          <p>The BYOK step is optional by design and built to feel non-punitive: skip is never hidden,
+          never de-emphasized, never gated behind a second confirmation. A missing key later surfaces as
+          a gentle prompt, not an error.</p>
+          <p>Dashboard scaffold: D3-rendered 52×7 heatmap, streak counter as a pure function (no side
+          effects — current streak counts consecutive days back from today, longest streak is a sliding
+          window), and topic distribution shown as a ranked bar list rather than a pie chart — a
+          deliberate legibility choice over a chart type that's harder to compare precisely.</p>
+        </div>
+      </details>
+
+      <details class="phase">
+        <summary>Background jobs <span class="status-badge done">shipped</span></summary>
+        <div class="phase-body">
+          <p><code>send-batch-invites</code> exists alongside the original synchronous admin route rather
+          than replacing it — the sync route stays fine for the admin dashboard's interactive flow, the
+          Trigger.dev version exists for anything that needs to trigger sends without a human watching.
+          <code>cleanup-expired-tokens</code> runs 2am UTC daily and specifically excludes users who hold
+          a different, still-valid token when reverting expired invites back to <code>waiting</code> — a
+          correctness detail that avoids clobbering a legitimately reissued invite.
+          <code>daily-intelligence</code> and <code>topic-extraction</code> are registered stubs that
+          return <code>{status: 'not_implemented'}</code> so Phase 2 work can fill in the body without
+          touching config or registration.</p>
+        </div>
+      </details>
+
+      <details class="phase">
+        <summary>Settings page <span class="status-badge done">shipped</span></summary>
+        <div class="phase-body">
+          <p>Pure UI work — every backing API route already existed from onboarding. Connections tab
+          flattens the onboarding's two-section (observe/publish) layout into one flat list of five
+          platforms, since Settings doesn't need the onboarding narrative. Publishing tab uses an
+          <code>initialized</code> guard so a background refetch can't clobber an in-progress edit — a
+          concrete fix for a React Query + local form state race. API keys tab uses a two-step delete
+          with a 3-second auto-revert window instead of a modal.</p>
+        </div>
+      </details>
+
+      <details class="phase">
+        <summary>Notes page <span class="status-badge done">shipped</span></summary>
+        <div class="phase-body">
+          <p>Split-pane editor; <code>NoteEditor</code> is keyed by note id specifically to force a
+          remount on switch and avoid stale local state carrying over between notes.
+          <code>isDirty</code> is computed by diffing local state against the fetched note rather than
+          pulling in a form library for what's effectively one textarea and a title field. Markdown
+          preview dynamically imports <code>marked</code> to keep it out of the SSR bundle, and renders
+          via <code>dangerouslySetInnerHTML</code> — accepted as safe because it's a user's own content
+          rendered back to only that user, not sanitized against cross-user XSS because there's no
+          cross-user rendering path here.</p>
+        </div>
+      </details>
+
+      <details class="phase">
+        <summary>Content Studio <span class="status-badge spec">spec'd, not built</span></summary>
+        <div class="phase-body">
+          <p>Introduces the shared BYOK adapter (<code>createByokAdapter(userId)</code>) used by every AI
+          feature from this point on — returns <code>null</code> rather than throwing when no key is
+          configured, pushing call sites toward graceful degradation instead of a try/catch wall.
+          Provider fallback order is fixed: Anthropic → OpenAI → Gemini → Groq.</p>
+          <p>Planned pipeline: a research agent pulls notes + recent posts, fans out per active platform
+          only, a critic agent scores each draft against platform format rules, and a reviser agent runs
+          on failure — <strong>capped at 2 revision loops, then ships what it has.</strong> A bounded-cost
+          decision over chasing a perfect draft indefinitely.</p>
+        </div>
+      </details>
+
+      <details class="phase">
+        <summary>AI Assistant <span class="status-badge spec">spec'd, not built</span></summary>
+        <div class="phase-body">
+          <p>Reuses the Content Studio's BYOK adapter rather than a second AI abstraction. Retrieval for
+          v1 is plain <code>ILIKE</code> text search over notes (plus "always include the 5 most recent
+          notes regardless of match"), explicitly staged as a stepping stone to real pgvector cosine
+          similarity search later — both queries are documented side by side in the spec as "now" and
+          "Phase 2." Every retrieval query is scoped by <code>user_id</code> in application code before
+          RLS ever gets a chance to apply. Missing-key state returns HTTP 402 with a structured error
+          rather than a generic 500, and the UI renders a full "add your key" screen instead of an error
+          state. Streaming is a hand-rolled 4-event SSE protocol, decoded manually since Axios can't
+          stream. Context is hard-capped — 12 notes, 10 topics, 30 days of activity — stated directly as
+          a cost-control measure, not a technical ceiling.</p>
+        </div>
+      </details>
+    </section>
+
+    <hr class="divider">
+
+    <!-- =========================================================== -->
+    <section id="tradeoffs">
+      <div class="section-num">08</div>
+      <h2>Key Tradeoffs</h2>
+      <p class="section-sub">Decisions with a stated cost and a stated reason for accepting it.</p>
+
+      <div class="callout tradeoff">
+        <span class="callout-label">Bounded revision over perfect output</span>
+        <p>Content generation caps critic/reviser loops at 2 passes, then ships whatever exists. Chasing
+        a perfect draft indefinitely would make generation latency and cost unbounded for a feature
+        that runs on the user's own API key — a worse failure mode than an occasionally imperfect post.</p>
+      </div>
+
+      <div class="callout tradeoff">
+        <span class="callout-label">Fan-out scoped to active platforms</span>
+        <p>Generation only ever targets platforms the user has explicitly marked active, never all five
+        connected platforms. Fewer platforms means fewer AI calls, which means lower cost against a
+        user-supplied key — directly stated as the reasoning, not an incidental side effect.</p>
+      </div>
+
+      <div class="callout tradeoff">
+        <span class="callout-label">One cron, fan-out inside it</span>
+        <p>The daily intelligence job is a single scheduled task that iterates all users, not one
+        scheduled task per user. Avoids the operational cost of registering/monitoring N schedules as
+        the user base grows.</p>
+      </div>
+
+      <div class="callout tradeoff">
+        <span class="callout-label">Debounced AI work on notes</span>
+        <p>Topic extraction waits 10 minutes after the last note save; knowledge-graph recompute waits 5.
+        Triggering either on every keystroke or every save would multiply AI calls for no benefit, since
+        a note is rarely "final" the instant it's saved.</p>
+      </div>
+
+      <div class="callout tradeoff">
+        <span class="callout-label">Text search now, vectors later</span>
+        <p>The assistant ships with <code>ILIKE</code> retrieval instead of waiting for pgvector to be
+        wired in. Explicitly staged as an interim step with the upgrade path already written down, rather
+        than blocking the whole feature on embeddings infrastructure.</p>
+      </div>
+
+      <div class="callout tradeoff">
+        <span class="callout-label">Sync route kept alongside the async one</span>
+        <p>The admin dashboard's synchronous invite-send route wasn't replaced when the Trigger.dev
+        version shipped — both exist because they serve different call patterns (interactive vs.
+        batch/automated), and removing the sync path would have added a network hop to a request that
+        doesn't need one.</p>
+      </div>
+
+      <div class="callout tradeoff">
+        <span class="callout-label">No third-party heatmap or agent framework</span>
+        <p>D3 directly for the heatmap and topic graph; native TypeScript + Trigger.dev tasks instead of
+        LangGraph/CrewAI for the AI pipeline. Both are cases where the "framework" would add an
+        abstraction layer over something narrow enough to own outright — a 52×7 grid and a
+        fan-out/critic/revise loop, not an open-ended agent runtime.</p>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- =========================================================== -->
+    <section id="limitations">
+      <div class="section-num">09</div>
+      <h2>Known Limitations &amp; Future Work</h2>
+      <p class="section-sub">What's explicitly out of scope today, and what's deferred on purpose.</p>
+
+      <div class="grid-2">
+        <div class="card">
+          <h4>Not implemented yet</h4>
+          <p>Content Studio and AI Assistant are fully spec'd but unbuilt. Daily intelligence and topic
+          extraction are stub tasks returning <code>not_implemented</code>. pgvector embeddings columns
+          don't exist yet — added only when the feature needing them ships.</p>
+        </div>
+        <div class="card">
+          <h4>Manual infra steps</h4>
+          <p>Production Vercel/Supabase/Upstash/Trigger.dev-cloud provisioning, OAuth app credentials, and
+          Brevo domain verification are code-complete but not yet executed against production — tracked
+          explicitly as a checklist, not silently assumed done.</p>
+        </div>
+        <div class="card">
+          <h4>Deliberately excluded, permanently</h4>
+          <p>No analytics dashboard — post performance isn't a user-facing feature even once the data
+          exists. No live Pomodoro/timer widget — Cadenz tracks activity, it doesn't manage time.</p>
+        </div>
+        <div class="card">
+          <h4>Explicitly deferred to later phases</h4>
+          <p>Notion two-way sync (conflict resolution: most-recent <code>updated_at</code> wins, flagged
+          if within 5 minutes), a browser extension with strict "raw URLs never leave the browser"
+          privacy rules, public portfolio pages, third-party integrations (LeetCode, Readwise).</p>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- =========================================================== -->
+    <section id="retrospective">
+      <div class="section-num">10</div>
+      <h2>Retrospective — what I'd flag in review</h2>
+      <p class="section-sub">Two places where the build docs and the shipped code disagree with each
+      other. Worth naming directly rather than pretending the paper trail is perfectly clean.</p>
+
+      <div class="callout risk">
+        <span class="callout-label">Doc drift — proxy cookie refresh</span>
+        <p>CLAUDE.md specifies that the proxy should call <code>supabase.auth.getUser()</code> on every
+        request to refresh SSR session cookies, and never use the unverified <code>getSession()</code>.
+        The shipped <code>src/proxy.ts</code> only performs the NextAuth JWT check — the Supabase
+        cookie-refresh call isn't there. Either it needs to be added, or the SSR client's own
+        <code>getAll</code>/<code>setAll</code> cookie handling in <code>server.ts</code> already covers
+        it and the instruction is stale. This is exactly the kind of gap I'd want a second engineer to
+        catch in review rather than assume away.</p>
+      </div>
+
+      <div class="callout risk">
+        <span class="callout-label">Scope inconsistency — Pomodoro</span>
+        <p>The README's feature list still includes a Pomodoro timer under a planned "Productivity
+        Suite," while the project's own scope guard states plainly: "Cadenz tracks activity, it does not
+        manage time... a live timer widget is out of scope." One of the two needs to change — I'd rather
+        surface that tension than let a reviewer find it first.</p>
+      </div>
+
+      <p>Neither of these is a shipped bug — they're both documentation-vs-implementation gaps caught by
+      re-reading the project's own specs against its own code, which is the point of writing this
+      document in the first place.</p>
+    </section>
+
+    <footer>
+      Cadenz — Engineering Deep Dive · Generated from the project's own architecture docs, schema
+      files, and source. Single static HTML file, no build step, no external dependencies beyond
+      Google Fonts.
+    </footer>
+
+  </main>
+</div>
+
+<script>
+  // Highlight active TOC link on scroll
+  const links = Array.from(document.querySelectorAll('nav.toc a'));
+  const sections = links.map(a => document.querySelector(a.getAttribute('href')));
+  function onScroll(){
+    let active = 0;
+    sections.forEach((s, i) => {
+      if(s && s.getBoundingClientRect().top <= 120) active = i;
+    });
+    links.forEach(a => a.classList.remove('active'));
+    if(links[active]) links[active].classList.add('active');
+  }
+  document.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+</script>
+
+</body>
+</html>
